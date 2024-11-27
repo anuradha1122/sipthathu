@@ -13,6 +13,17 @@ return new class extends Migration
     {
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
+            $table->integer('workPlaceId')->unsigned()->required();
+            $table->integer('officeId')->unsigned()->required();
+            $table->tinyInteger('authorityId')->unsigned()->required();
+            $table->tinyInteger('ethnicityId')->unsigned()->required();
+            $table->tinyInteger('languageId')->unsigned()->required();
+            $table->tinyInteger('classId')->unsigned()->required();
+            $table->tinyInteger('densityId')->unsigned()->required();
+            $table->tinyInteger('genderId')->unsigned()->required();
+            $table->tinyInteger('facilityId')->unsigned()->required();
+            $table->tinyInteger('religionId')->unsigned()->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

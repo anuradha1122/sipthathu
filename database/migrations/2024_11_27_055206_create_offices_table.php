@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('offices', function (Blueprint $table) {
             $table->id();
+            $table->integer('workPlaceId')->unsigned()->required();
+            $table->mediumInteger('officeNo')->unsigned()->required();
+            $table->integer('higherWorkPlaceId')->unsigned()->nullable();
+            $table->tinyInteger('officeTypeId')->unsigned()->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

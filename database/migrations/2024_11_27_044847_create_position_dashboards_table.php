@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('position_dashboards', function (Blueprint $table) {
             $table->id();
+            $table->integer('positionId')->unsigned()->required();
+            $table->integer('dashboardId')->unsigned()->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

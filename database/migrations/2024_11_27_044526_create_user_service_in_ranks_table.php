@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('user_service_in_ranks', function (Blueprint $table) {
             $table->id();
+            $table->integer('userServiceId')->unsigned()->required();
+            $table->tinyInteger('rankId')->unsigned()->required();
+            $table->date('rankedDate')->required();
+            $table->tinyInteger('current')->default(1)->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

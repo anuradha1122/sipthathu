@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('family_member_types', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 50)->required();
+            $table->integer('serviceId')->unsigned()->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

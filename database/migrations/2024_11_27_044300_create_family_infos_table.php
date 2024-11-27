@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('family_infos', function (Blueprint $table) {
             $table->id();
+            $table->integer('userId')->unsigned()->required();
+            $table->tinyInteger('memberType')->unsigned()->nullable();
+            $table->string('nic', 12)->nullable();
+            $table->string('name', 200)->required();
+            $table->mediumInteger('school')->unsigned()->nullable();
+            $table->string('profession', 200)->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

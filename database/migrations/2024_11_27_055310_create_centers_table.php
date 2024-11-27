@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('centers', function (Blueprint $table) {
             $table->id();
+            $table->integer('workPlaceId')->unsigned()->required();
+            $table->integer('officeId')->unsigned()->required();
+            $table->mediumInteger('centerNo')->unsigned()->required();
+            $table->tinyInteger('centerType')->unsigned()->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

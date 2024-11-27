@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('personal_infos', function (Blueprint $table) {
             $table->id();
+            $table->integer('userId')->unsigned()->required()->unique();
+            $table->tinyInteger('race')->unsigned()->nullable();
+            $table->tinyInteger('religion')->unsigned()->nullable();
+            $table->tinyInteger('civilStatus')->unsigned()->nullable();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

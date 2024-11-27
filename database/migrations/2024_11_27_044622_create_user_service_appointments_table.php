@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('user_service_appointments', function (Blueprint $table) {
             $table->id();
+            $table->integer('userServiceId')->unsigned()->required();
+            $table->integer('workPlaceId')->unsigned()->required();
+            $table->date('appointedDate')->required();
+            $table->date('releasedDate')->nullable();
+            $table->tinyInteger('appointmentType')->default(1)->required();
+            $table->tinyInteger('current')->default(1)->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

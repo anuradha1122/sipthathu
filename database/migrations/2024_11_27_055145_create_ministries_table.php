@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('ministries', function (Blueprint $table) {
             $table->id();
+            $table->integer('workPlaceId')->unsigned()->required();
+            $table->integer('officeId')->unsigned()->required();
+            $table->mediumInteger('ministryNo')->unsigned()->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

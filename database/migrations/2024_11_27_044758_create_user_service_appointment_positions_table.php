@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('user_service_appointment_positions', function (Blueprint $table) {
             $table->id();
+            $table->integer('userServiceAppointmentId')->unsigned()->required();
+            $table->integer('positionId')->unsigned()->required();
+            $table->date('positionedDate')->required();
+            $table->date('releasedDate')->nullable();
+            $table->tinyInteger('current')->default(1)->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }

@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('work_place_contact_infos', function (Blueprint $table) {
             $table->id();
+            $table->integer('workPlaceId')->unsigned()->required()->unique();
+            $table->string('addressLine1', 80)->required();
+            $table->string('addressLine2', 80)->required();
+            $table->string('addressLine3', 80)->required();
+            $table->string('mobile1', 10)->required()->unique();
+            $table->string('mobile2', 10)->required()->unique();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }
