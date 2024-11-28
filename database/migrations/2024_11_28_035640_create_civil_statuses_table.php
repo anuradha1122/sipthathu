@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('civil_statuses', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 50)->required();
+            $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
     }
