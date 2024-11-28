@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('positions', function (Blueprint $table) {
+        Schema::create('work_place_catagories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50)->required();
-            $table->tinyInteger('workPlaceCatagoryId')->unsigned()->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('positions');
+        Schema::dropIfExists('work_place_catagories');
     }
 };
