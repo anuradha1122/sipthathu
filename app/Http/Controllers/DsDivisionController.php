@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserInServiceRequest;
-use App\Http\Requests\UpdateUserInServiceRequest;
-use App\Models\UserInService;
+use App\Http\Requests\StoreDsDivisionRequest;
+use App\Http\Requests\UpdateDsDivisionRequest;
+use App\Models\DsDivision;
 
-class UserInServiceController extends Controller
+class DsDivisionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('teacher/dashboard');
+        //
     }
 
     /**
@@ -27,7 +27,7 @@ class UserInServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserInServiceRequest $request)
+    public function store(StoreDsDivisionRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class UserInServiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(UserInService $userInService)
+    public function show(DsDivision $dsDivision)
     {
         //
     }
@@ -43,7 +43,7 @@ class UserInServiceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(UserInService $userInService)
+    public function edit(DsDivision $dsDivision)
     {
         //
     }
@@ -51,7 +51,7 @@ class UserInServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserInServiceRequest $request, UserInService $userInService)
+    public function update(UpdateDsDivisionRequest $request, DsDivision $dsDivision)
     {
         //
     }
@@ -59,7 +59,7 @@ class UserInServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserInService $userInService)
+    public function destroy(DsDivision $dsDivision)
     {
         //
     }

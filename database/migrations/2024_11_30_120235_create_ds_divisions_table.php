@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('work_places', function (Blueprint $table) {
+        Schema::create('ds_divisions', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 200)->required();
-            $table->mediumInteger('censusNo')->unsigned()->nullable();
-            $table->tinyInteger('categoryId')->unsigned()->required();
+            $table->integer('districtId')->unsigned()->required();
+            $table->string('name', 50)->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_places');
+        Schema::dropIfExists('ds_divisions');
     }
 };

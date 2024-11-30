@@ -38,5 +38,13 @@ class DatabaseSeeder extends Seeder
         $this->call(OfficeTypeSeeder::class);
         $this->call(WorkPlaceCatagorySeeder::class);
         $this->call(positionSeeder::class);
+        $this->call(WorkPlaceSeeder::class);
+        $this->call(ProvinceSeeder::class);
+        $this->call(DistrictSeeder::class);
+        $this->call(DsDivisionSeeder::class);
+        $this->call(GnDivisionSeeder::class);
+        $this->call(SchoolSeeder::class);
+        $this->call(OfficeSeeder::class);
+        $this->call(MinistrySeeder::class);
     }
 }
