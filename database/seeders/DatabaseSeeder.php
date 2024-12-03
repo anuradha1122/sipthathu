@@ -55,5 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CircularSubjectSeeder::class);
         $this->call(SubjectSectionSeeder::class);
         $this->call(SubjectCategorySeeder::class);
+        $this->call(AppointmentCategorySeeder::class);
+        $this->call(AppointmentMediumSeeder::class);
     }
 }
