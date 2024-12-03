@@ -50,5 +50,10 @@ class DatabaseSeeder extends Seeder
         $this->call(EducationQualificationTypeSeeder::class);
         $this->call(ProfessionalQualificationSeeder::class);
         $this->call(ProfessionalQualificationTypeSeeder::class);
+        $this->call(SubjectSeeder::class);
+        $this->call(SubjectMediumSeeder::class);
+        $this->call(CircularSubjectSeeder::class);
+        $this->call(SubjectSectionSeeder::class);
+        $this->call(SubjectCategorySeeder::class);
     }
 }

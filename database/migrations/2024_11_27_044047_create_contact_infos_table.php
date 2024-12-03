@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('contact_infos', function (Blueprint $table) {
             $table->id();
             $table->integer('userId')->unsigned()->required()->unique();
-            $table->string('addressLine1', 80)->required();
-            $table->string('addressLine2', 80)->required();
-            $table->string('addressLine3', 80)->required();
+            $table->string('permAddressLine1', 80)->required();
+            $table->string('permAddressLine2', 80)->required();
+            $table->string('permAddressLine3', 80)->required();
+            $table->string('tempAddressLine1', 80)->required();
+            $table->string('tempAddressLine2', 80)->required();
+            $table->string('tempAddressLine3', 80)->required();
             $table->string('mobile1', 10)->required()->unique();
             $table->string('mobile2', 10)->required()->unique();
             $table->tinyInteger('active')->default(1)->required();

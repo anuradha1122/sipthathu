@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('offices', function (Blueprint $table) {
+        Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->integer('workPlaceId')->unsigned()->required();
-            $table->string('officeNo', 6)->required();
-            $table->integer('higherWorkPlaceId')->unsigned()->nullable();
-            $table->integer('districtId')->unsigned()->nullable();
-            $table->tinyInteger('officeTypeId')->unsigned()->required();
+            $table->string('name', 200)->required();
+            $table->mediumInteger('sectionId')->unsigned()->required();
+            $table->mediumInteger('categoryId')->unsigned()->required();
+            $table->mediumInteger('weekPeriod')->unsigned()->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('offices');
+        Schema::dropIfExists('subjects');
     }
 };
