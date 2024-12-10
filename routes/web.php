@@ -31,5 +31,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/teacher/dashboard', [UserController::class, 'index'])->name('teacher.dashboard');
 Route::get('/teacher/register', [UserController::class, 'create'])->name('teacher.register');
+Route::post('/teacher/register', [UserController::class, 'store'])->name('teacher.store');
 
 require __DIR__.'/auth.php';

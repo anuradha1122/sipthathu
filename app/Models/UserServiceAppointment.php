@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class UserServiceAppointment extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'userServiceId',
+        'workPlaceId',
+        'appointedDate',
+        'releasedDate',
+        'appointmentType',
+        'current',
+    ];
 }

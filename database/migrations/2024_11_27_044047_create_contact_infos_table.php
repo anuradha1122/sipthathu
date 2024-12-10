@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string('permAddressLine1', 80)->required();
             $table->string('permAddressLine2', 80)->required();
             $table->string('permAddressLine3', 80)->required();
-            $table->string('tempAddressLine1', 80)->required();
-            $table->string('tempAddressLine2', 80)->required();
-            $table->string('tempAddressLine3', 80)->required();
+            $table->string('tempAddressLine1', 80)->nullable();
+            $table->string('tempAddressLine2', 80)->nullable();
+            $table->string('tempAddressLine3', 80)->nullable();
             $table->string('mobile1', 10)->required()->unique();
-            $table->string('mobile2', 10)->required()->unique();
+            $table->string('mobile2', 10)->required()->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

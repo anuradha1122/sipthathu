@@ -34,7 +34,7 @@
                     <div class="relative flex-shrink-0 h-[calc(100vh-20rem)] w-full sm:w-1/4 flex flex-col rounded-xl bg-white bg-clip-border p-4 mt-4 text-gray-700 shadow-xl shadow-blue-gray-900/5 hidden sm:flex">
                         <div class="p-4 mb-2">
                             <h5 class="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-                                {{ Auth::user()->name }}
+                                {{ Auth::user()->nameWithInitials }}
                             </h5>
                         </div>
                         <nav class="flex flex-col gap-1 p-2 font-sans text-base font-normal text-blue-gray-700">

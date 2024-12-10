@@ -2,10 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+
 use Illuminate\Http\Request;
-use App\Models\Race;
-use App\Models\Religion;
-use App\Models\CivilStatus;
+use App\Models\Subject;
+use App\Models\AppointmentMedium;
+use App\Models\User;
+use App\Models\UserInService;
+use App\Models\UserServiceAppointment;
+use App\Models\UserServiceAppointmentPosition;
+use App\Models\ContactInfo;
+use App\Models\PersonalInfo;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -57,13 +65,86 @@ class UserController extends Controller
 
     public function create()
     {
-        $races = Race::where('active', 1)->get();
-        $religions = Religion::where('active', 1)->get();
-        $civilStatuses = CivilStatus::where('active', 1)->get();
+        $subjects = Subject::where('active', 1)->get();
+        $appointedMediums = AppointmentMedium::where('active', 1)->get();
+
         $option = [
             'Dashboard' => 'teacher.dashboard',
             'Teacher Registration' => 'teacher.register'
         ];
-        return view('teacher/register',compact('option','races','religions','civilStatuses'));
+        return view('teacher/register',compact('option','subjects','appointedMediums'));
+    }
+
+    public function store(StoreUserRequest $request)
+    {
+        $subjects = Subject::where('active', 1)->get();
+        $appointedMediums = AppointmentMedium::where('active', 1)->get();
+
+        $option = [
+            'Dashboard' => 'teacher.dashboard',
+            'Teacher Registration' => 'teacher.register'
+        ];
+        //dd($request);
+        //$validatedData = $request->validated();
+        $name = $request->name;
+        // Convert the full name to an array of words
+        $nameParts = explode(' ', $name);
+        // Convert all parts to title case
+        $nameParts = array_map('ucfirst', $nameParts);
+        // Get the last name (the last element in the array)
+        $lastName = array_pop($nameParts);
+        // Generate initials for the rest of the names
+        $initials = array_map(function($part) {
+            return strtoupper($part[0]) . '.';
+        }, $nameParts);
+        // Combine initials and last name
+        $nameWithInitials = implode('', $initials) . ' ' . $lastName;
+    
+
+        $user = User::create([
+            'name' => ucwords(strtolower($request->name)),
+            'nameWithInitials' => $nameWithInitials,
+            'nic' => strtoupper($request->nic),
+            'password' => Hash::make(substr($request->nic, 0, 6)),
+        ]);
+
+        $userInService = UserInService::create([
+            'userId' => $user->id,
+            'serviceId' => 1,
+            'appointedDate' => $request->serviceDate,
+        ]);
+
+        $userServiceAppointment = UserServiceAppointment::create([
+            'userServiceId' => $userInService->id,
+            'workPlaceId' => $request->school,
+            'appointedDate' => $request->serviceDate,
+            'appointmentType' => 1,
+        ]);
+
+        $contactInfo = ContactInfo::create([
+            'userId' => $user->id,
+            'permAddressLine1' => ucwords(strtolower($request->addressLine1)),
+            'permAddressLine2' => ucwords(strtolower($request->addressLine2)),
+            'permAddressLine3' => ucwords(strtolower($request->addressLine3)),
+            'mobile1' => $request->mobile,
+        ]);
+        $contactInfo->save();
+
+        $personalInfo = PersonalInfo::create([
+            'userId' => $user->id,
+            'genderId' => $request->gender,
+            'birthDay' => $request->birthDay,
+        ]);
+        $personalInfo->save();
+
+        $position = UserServiceAppointmentPosition::create([
+            'userServiceAppointmentId' => $userServiceAppointment->id,
+            'positionId' => 1,
+            'positionedDate' => $request->serviceDate,
+        ]);
+
+        session()->flash('success', 'User has been successfully registered!');
+        
+        return view('teacher/register',compact('option','subjects','appointedMediums'));
     }
 }

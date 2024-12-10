@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('workPlaceId')->unsigned()->required();
             $table->string('officeNo', 6)->required();
-            $table->integer('higherWorkPlaceId')->unsigned()->nullable();
+            $table->integer('higherOfficeId')->unsigned()->nullable();
             $table->integer('districtId')->unsigned()->nullable();
             $table->tinyInteger('officeTypeId')->unsigned()->required();
             $table->tinyInteger('active')->default(1)->required();

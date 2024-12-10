@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('personal_infos', function (Blueprint $table) {
             $table->id();
             $table->integer('userId')->unsigned()->required()->unique();
-            $table->tinyInteger('race')->unsigned()->nullable();
-            $table->tinyInteger('religion')->unsigned()->nullable();
-            $table->tinyInteger('civilStatus')->unsigned()->nullable();
+            $table->tinyInteger('raceId')->unsigned()->nullable();
+            $table->tinyInteger('religionId')->unsigned()->nullable();
+            $table->tinyInteger('civilStatusId')->unsigned()->nullable();
             $table->tinyInteger('genderId')->unsigned()->required();
-            $table->date('birthDate')->required();
+            $table->date('birthDay')->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

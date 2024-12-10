@@ -57,5 +57,11 @@ class DatabaseSeeder extends Seeder
         $this->call(SubjectCategorySeeder::class);
         $this->call(AppointmentCategorySeeder::class);
         $this->call(AppointmentMediumSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(UserInServiceSeeder::class);
+        $this->call(UserServiceAppointmentSeeder::class);
+        $this->call(UserServiceAppointmentPositionSeeder::class);
+        $this->call(ContactInfoSeeder::class);
+        $this->call(PersonalInfoSeeder::class);
     }
 }
