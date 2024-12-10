@@ -15,7 +15,7 @@ class UserServiceAppointmentSeeder extends Seeder
     {
         DB::table('user_service_appointments')->truncate();
         $data = array(
-            array('id' => '1','userServiceId' => '1','workPlaceId' => '10042','appointedDate' => '2024-11-26','releasedDate' => NULL,'appointmentType' => '1'),
+            array('id' => '1','userServiceId' => '1','workPlaceId' => '20','appointedDate' => '2024-11-26','releasedDate' => NULL,'appointmentType' => '1'),
             array('id' => '2','userServiceId' => '2','workPlaceId' => '10043','appointedDate' => '2024-11-26','releasedDate' => NULL,'appointmentType' => '1')
         );
         DB::table('user_service_appointments')->insert($data);

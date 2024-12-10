@@ -44,4 +44,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected $appends = ['serviceId'];
+
+    /**
+     * Relationship: User has one UserInService.
+     */
+    public function userInService()
+    {
+        return $this->hasOne(UserInService::class, 'userId', 'id');
+    }
+
+    /**
+     * Accessor: Dynamically get the serviceId attribute.
+     */
+    public function getServiceIdAttribute()
+    {
+        return $this->userInService?->id; // Returns the `id` from the related UserInService model
+    }
 }
