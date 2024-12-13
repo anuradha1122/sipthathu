@@ -21,20 +21,39 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['required', 'string', 'max:100'],
             'addressLine1' => ['required', 'string', 'max:100'],
             'addressLine2' => ['required', 'string', 'max:100'],
             'addressLine3' => ['required', 'string', 'max:100'],
             'mobile' => ['required', 'string', 'max:10', 'unique:contact_infos,mobile1','unique:contact_infos,mobile2', 'regex:/^[0-9]{10,15}$/'],
-            'subject' => ['required', 'exists:subjects,id'],
-            'medium' => ['required', 'exists:appointment_media,id'],
-            'school' => ['required', 'not_in:0'],
-            'zone' => ['required', 'not_in:0'],
-            'nic' => ['required','unique:users,nic','regex:/^([0-9]{9}[Vv]|[0-9]{12})$/'],
+
+            //'school' => ['required', 'not_in:0'],
+            'nic' => ['required', 'unique:users,nic', 'regex:/^([0-9]{9}[Vv]|[0-9]{12})$/'],
             'birthDay' => ['required', 'date', 'before:today'],
             'serviceDate' => ['required', 'date', 'after_or_equal:birthDay'],
         ];
+
+        // Conditionally add 'zone' validation rule
+        if ($this->has('zone')) {
+            $rules['zone'] = ['required', 'not_in:0'];
+        }
+        //dd($this->has('school'));
+        if ($this->has('school')) {
+            $rules['school'] = ['required', 'not_in:0'];
+        }
+
+        if($this->has('subject')){
+            $rules['subject'] = ['required', 'exists:subjects,id'];
+        }
+
+        if($this->has('medium')){
+            $rules['medium'] = ['required', 'exists:appointment_media,id'];
+        }
+
+        
+        //dd($this->input('school'));
+        return $rules;
     }
 
     public function messages(): array

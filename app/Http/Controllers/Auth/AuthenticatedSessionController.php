@@ -61,15 +61,14 @@ class AuthenticatedSessionController extends Controller
         ->where('active', 1)
         ->value('id');
 
-
-        Auth::user()->setAttribute('serviceId', $userServiceId);
-        Auth::user()->setAttribute('appointmentId', $userServiceAppointmentId);
-        Auth::user()->setAttribute('workPlaceId', $workPlaceId);
-        Auth::user()->setAttribute('workPlaceName', $workPlaceName);
-        Auth::user()->setAttribute('workPlaceCensusNo', $workPlaceCensusNo);
-        Auth::user()->setAttribute('workPlaceCategoryId', $workPlaceCategoryId);
-        //Auth::user()->setAttribute('attachmentIds', $userServiceAppointmentIds);
-        Auth::user()->setAttribute('positionId', $userServiceAppointmentPositionId);
+        session(['serviceId' => $userServiceId]);
+        session(['appointmentId' => $userServiceAppointmentId]);
+        session(['workPlaceId' => $workPlaceId]);
+        session(['workPlaceName' => $workPlaceName]);
+        session(['workPlaceCensusNo' => $workPlaceCensusNo]);
+        session(['workPlaceCategoryId' => $workPlaceCategoryId]);
+        //session(['attachmentIds' => $userServiceAppointmentIds]);
+        session(['positionId' => $userServiceAppointmentPositionId]);
 
         if($workPlaceCategoryId ==1){
             $school = DB::table('schools')
@@ -94,10 +93,11 @@ class AuthenticatedSessionController extends Controller
 
             $higherProviId = $province->higherOfficeId ?? null;
 
-            Auth::user()->setAttribute('schoolId', $schoolId);
-            Auth::user()->setAttribute('higherDivId', $higherDivId);
-            Auth::user()->setAttribute('higherZoneId', $higherZoneId);
-            Auth::user()->setAttribute('higherProviId', $higherProviId);
+            session(['schoolId' => $schoolId]);
+            session(['higherDivId' => $higherDivId]);
+            session(['higherZoneId' => $higherZoneId]);
+            session(['higherProviId' => $higherProviId]);
+
         }
         if($workPlaceCategoryId ==2){
             $office = DB::table('offices')
@@ -117,23 +117,23 @@ class AuthenticatedSessionController extends Controller
                 ->first(['higherOfficeId']);
                 $higherProviId = $office->higherOfficeId ?? null;
 
-                Auth::user()->setAttribute('officeId', $officeId);
-                Auth::user()->setAttribute('officeTypeId', $officeType);
-                Auth::user()->setAttribute('higherZoneId', $higherZoneId);
-                Auth::user()->setAttribute('higherProviId', $higherProviId);
+                session(['officeId' => $officeId]);
+                session(['officeTypeId' => $officeType]);
+                session(['higherZoneId' => $higherZoneId]);
+                session(['higherProviId' => $higherProviId]);
             }
             if($officeType == 2){
                 $higherProviId = $higherOfficeId;
 
-                Auth::user()->setAttribute('officeId', $officeId);
-                Auth::user()->setAttribute('officeTypeId', $officeType);
-                Auth::user()->setAttribute('higherProviId', $higherProviId);
+                session(['officeId' => $officeId]);
+                session(['officeTypeId' => $officeType]);
+                session(['higherProviId' => $higherProviId]);
             }
 
             if($officeType == 1){
 
-                Auth::user()->setAttribute('officeId', $officeId);
-                Auth::user()->setAttribute('officeTypeId', $officeType);
+                session(['officeId' => $officeId]);
+                session(['officeTypeId' => $officeType]);
             }
         
         }
@@ -148,6 +148,9 @@ class AuthenticatedSessionController extends Controller
 
             Auth::user()->setAttribute('ministryId', $ministryId);
             Auth::user()->setAttribute('relateOfficeId', $relateOfficeId);
+
+            session(['ministryId' => $ministryId]);
+            session(['relateOfficeId' => $relateOfficeId]);
         }
 
         // $userServiceAppointmentIds = DB::table('user_service_appointments')
@@ -159,10 +162,10 @@ class AuthenticatedSessionController extends Controller
 
         
 
-        //session(['serviceId' => $userServiceId]);
+        
 
         
-        dd(Auth::user());
+        //dd(Auth::user());
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
