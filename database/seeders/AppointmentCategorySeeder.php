@@ -15,11 +15,13 @@ class AppointmentCategorySeeder extends Seeder
     {
         DB::table('appointment_categories')->truncate();
 
-        $data = [
-            ['id' => 1, 'name' => 'Sinhala'],
-            ['id' => 2, 'name' => 'Tamil'],
-            ['id' => 3, 'name' => 'English'],
-        ];
+        $data = array(
+            array('id' => '1','description' => 'Graduate Teachers (All graduates including post-graduates)','name' => 'Graduate'),
+            array('id' => '2','description' => 'Trained Teachers ( Including National Teaching Sciences Diploma / Science-Maths two year diploma/ Distant teacher training)','name' => 'Trained'),
+            array('id' => '3','description' => 'Teachers who are not trained and others with two year/three year diplomas','name' => 'Other Diplomas'),
+            array('id' => '4','description' => 'Probationary/Trainee  teachers who are not enlisted to Sri Lanka Teaching Service','name' => 'Probationary'),
+            array('id' => '5','description' => 'Teachers who receive allowances on contract-basis and other methods.','name' => 'Contract-basis')
+          );
 
         DB::table('appointment_categories')->insert($data);
     }

@@ -11,6 +11,7 @@ class PersonalInfo extends Model
 
     protected $fillable = [
         'userId',
+        'profilePicture',
         'raceId',
         'religionId',
         'civilStatusId',

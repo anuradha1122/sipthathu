@@ -63,5 +63,11 @@ class DatabaseSeeder extends Seeder
         $this->call(UserServiceAppointmentPositionSeeder::class);
         $this->call(ContactInfoSeeder::class);
         $this->call(PersonalInfoSeeder::class);
+        $this->call(ClassListSeeder::class);
+        $this->call(GradeSeeder::class);
+        $this->call(SchoolSectionSeeder::class);
+        $this->call(GuardianRelationshipSeeder::class);
+        $this->call(BloodGroupSeeder::class);
+        $this->call(ClassMediumSeeder::class);
     }
 }

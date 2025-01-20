@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('appointment_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50)->required();
+            $table->string('description', 200)->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

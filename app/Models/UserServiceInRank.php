@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class UserServiceInRank extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'userServiceId',
+        'rankId',
+        'rankedDate',
+        'current',
+        'active',
+    ];
 }

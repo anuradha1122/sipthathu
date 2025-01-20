@@ -51,7 +51,15 @@ class StoreUserRequest extends FormRequest
             $rules['medium'] = ['required', 'exists:appointment_media,id'];
         }
 
-        
+        if($this->has('category')){
+            $rules['category'] = ['required', 'exists:appointment_categories,id'];
+        }
+
+        if($this->has('rank')){
+            $rules['rank'] = ['required', 'exists:ranks,id'];
+        }
+
+
         //dd($this->input('school'));
         return $rules;
     }

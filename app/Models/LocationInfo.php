@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class LocationInfo extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'userId',
+        'educationDivisionId',
+        'gnDivisionId',
+        'active',
+    ];
 }
