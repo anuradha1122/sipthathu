@@ -11,7 +11,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+
                     <x-profile-data
 
                         heading="Name"
@@ -53,7 +53,10 @@
                             'Race' => $student->race,
                             'Religion' => $student->religion,
                             'Blood Group' => $student->bloodGroup,
+                            'Illness' => $student->illness,
                             'Birthday' => $student->birthDay,
+                            'Birth Certificate No' => $student->birthCertificate,
+                            'Birth DS Division' => $student->birthDsDivision,
                             'Gender' => $student->gender,
                         ]"
                         d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 2c4.411 0 8 3.589 8 8s-3.589 8-8 8-8-3.589-8-8 3.589-8 8-8zm0 1.75a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM12 9a1 1 0 110-2 1 1 0 010 2zm0 4.75c-2.347 0-4.444 1.003-5.716 2.574-.24.292-.051.676.351.676h10.73c.402 0 .591-.384.351-.676C16.444 14.753 14.347 13.75 12 13.75z"
@@ -82,7 +85,7 @@
                     />
 
 
-                    
+
                 </tbody>
             </table>
         </div>

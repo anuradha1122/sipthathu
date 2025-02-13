@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateStudentRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+//use Spatie\Image\Image;
 use App\Models\Student;
 use App\Models\StudentContactInfo;
 use App\Models\StudentPersonalInfo;
@@ -19,6 +20,7 @@ use App\Models\BloodGroup;
 use App\Models\GuardianRelationship;
 use App\Models\ClassList;
 use App\Models\SchoolClassStudent;
+use App\Models\Illness;
 
 class StudentController extends Controller
 {
@@ -82,6 +84,7 @@ class StudentController extends Controller
             (object) ['id' => 2, 'name' => 'Female'],
         ]);
         $bloodGroups = BloodGroup::where('active', 1)->get();
+        $illnesses = Illness::where('active', 1)->get();
         $guardianRelationships = GuardianRelationship::where('active', 1)->get();
 
         $classes = ClassList::join('school_class_lists', 'class_lists.id', '=', 'school_class_lists.classId')
@@ -96,9 +99,9 @@ class StudentController extends Controller
             'Student Registration' => 'student.register'
         ];
 
-        return view('student/register',compact('option','races','religions','genders','bloodGroups','guardianRelationships','classes'));
+        return view('student/register',compact('option','races','religions','genders','bloodGroups','illnesses','guardianRelationships','classes'));
     }
-    
+
 
     /**
      * Store a newly created resource in storage.
@@ -111,6 +114,7 @@ class StudentController extends Controller
         //dd($request->hasFile('photo'));
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('studentphotos', 'public');
+            //$photoPath = Image::load($request->file('photo'))->resize(100,100)->save('studentphotos', 'public');
             $profileImage = Storage::url($photoPath);
         } else {
             $profileImage = null;
@@ -160,6 +164,7 @@ class StudentController extends Controller
         $student->update(['studentNo' => $studentNo]);
 
         // Insert into 'student_contact_infos' table
+        //dd($request->guardianNic);
         StudentContactInfo::create([
             'studentId' => $student->id,
             'addressLine1' => $request->addressLine1,
@@ -167,6 +172,7 @@ class StudentController extends Controller
             'addressLine3' => $request->addressLine3,
             'mobile' => $request->mobile,
             'guardianName' => $request->guardianName,
+            'guardianNic' => $request->guardianNic,
             'guardianRelationshipId' => $request->guardianRelationship,
             'guardianEmail' => $request->guardianEmail,
             'guardianMobile' => $request->guardianMobile,
@@ -174,13 +180,13 @@ class StudentController extends Controller
 
         // Insert into 'student_location_infos' table
 
-        
+
         StudentLocationInfo::create([
             'studentId' => $student->id,
             'educationDivisionId' => $request->division,
             'gnDivisionId' => $request->gnDivision,
         ]);
-        
+
         //dd($profileImage);
         // Insert into 'student_personal_infos' table
         StudentPersonalInfo::create([
@@ -190,7 +196,10 @@ class StudentController extends Controller
             'religionId' => $request->religion,
             'genderId' => $request->gender,
             'bloodGroupId' => $request->bloodGroup,
+            'illness' => $request->illness,
             'birthDay' => $request->birthDay,
+            'birthCertificate' => $request->birthCertificate,
+            'birthDsDivision' => $request->birthDsDivision,
         ]);
         //dd($profileImage);
         // Insert into 'student_schools' table
@@ -240,6 +249,8 @@ class StudentController extends Controller
                 ->leftjoin('races', 'races.id', '=', 'student_personal_infos.raceId')
                 ->leftjoin('religions', 'religions.id', '=', 'student_personal_infos.religionId')
                 ->leftjoin('blood_groups', 'blood_groups.id', '=', 'student_personal_infos.bloodGroupId')
+                ->leftjoin('illnesses', 'illnesses.id', '=', 'student_personal_infos.illnessId')
+                ->leftjoin('ds_divisions AS birth_ds_divisions', 'birth_ds_divisions.id', '=', 'student_personal_infos.birthDsDivisionId')
                 ->leftjoin('guardian_relationships', 'guardian_relationships.id', '=', 'student_contact_infos.guardianRelationshipId')
                 ->leftjoin('offices', 'offices.id', '=', 'student_location_infos.educationDivisionId')
                 ->leftjoin('work_places AS work_place_divisions', 'work_place_divisions.id', '=', 'offices.workPlaceId')
@@ -260,6 +271,8 @@ class StudentController extends Controller
                     'races.name as race',
                     'religions.name as religion',
                     'blood_groups.name as bloodGroup',
+                    'illnesses.name as illness',
+                    'birth_ds_divisions.name as birthDsDivision',
                     DB::raw("CASE WHEN student_personal_infos.genderId = 1 THEN 'Boy' WHEN student_personal_infos.genderId = 2 THEN 'Girl' END as gender"),
                     'work_place_divisions.name as educationDivision',
                     'gn_divisions.name as gnDivision',
@@ -290,7 +303,7 @@ class StudentController extends Controller
                 // Redirect to the search page or show an error message for invalid ID
                 return redirect()->route('student.search')->with('error', 'Invalid student ID provided.');
             }
-            
+
         }else{
             return redirect()->route('student.search');
         }

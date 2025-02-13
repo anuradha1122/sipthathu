@@ -16,6 +16,7 @@ class StudentContactInfo extends Model
         'addressLine3',
         'mobile',
         'guardianName',
+        'guardianNic',
         'guardianRelationshipId',
         'guardianMobile',
         'guardianEmail',

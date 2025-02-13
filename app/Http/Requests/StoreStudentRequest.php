@@ -34,8 +34,14 @@ class StoreStudentRequest extends FormRequest
             'religion' => 'required|exists:religions,id|not_in:0', // Religion
             'bloodGroup' => 'nullable', // Blood Group
             'birthDay' => 'required|date|before:today', // Birth Day
+            'birthCertificate' => 'required|integer|between:1,999999', // Birth Certificate
+            // 'birthProvince' => 'required|exists:provinces,id|not_in:0', // Birth Province
+            // 'birthDistrict' => 'required|exists:districts,id|not_in:0',
+            // 'birthDsDivision' => 'required|not_in:0',
             'registerDate' => 'required|date', // Registered Date
             'guardianName' => 'required|string|max:255', // Guardian Full Name
+            'addressLine3' => 'nullable|string|max:255', // Address Line 3 (optional)
+            'guardianNic' => 'required|regex:/^\d{9}[vVxX]$/|size:10', // guardian NIC
             'guardianRelationship' => 'required|exists:guardian_relationships,id|not_in:0', // Guardian Relationship
             'guardianEmail' => 'nullable|email|max:255', // Guardian Email (optional)
             'guardianMobile' => 'required|digits:10', // Guardian Mobile
@@ -43,6 +49,6 @@ class StoreStudentRequest extends FormRequest
             'gnDivision' => 'nullable', // GN Division selection
             'class' => 'required|not_in:0', // Division Name
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Photo (optional)
-        ];        
+        ];
     }
 }

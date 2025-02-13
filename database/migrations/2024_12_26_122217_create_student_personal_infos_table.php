@@ -19,7 +19,10 @@ return new class extends Migration
             $table->tinyInteger('religionId')->unsigned()->nullable();
             $table->tinyInteger('genderId')->unsigned()->required();
             $table->tinyInteger('bloodGroupId')->unsigned()->nullable();
+            $table->mediumInteger('illnessId')->nullable();
             $table->date('birthDay')->required();
+            $table->Integer('birthCertificate')->required();
+            $table->mediumInteger('birthDsDivisionId')->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

@@ -45,12 +45,12 @@ class LoginRequest extends FormRequest
             array_merge($this->only('nic', 'password'), ['active' => 1]),
             $this->boolean('remember')
         )) {
-        RateLimiter::hit($this->throttleKey());
-    
-        throw ValidationException::withMessages([
-            'nic' => trans('auth.failed'),
-        ]);
-    }
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'nic' => trans('auth.failed'),
+            ]);
+        }
 
         RateLimiter::clear($this->throttleKey());
     }

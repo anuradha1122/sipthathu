@@ -69,5 +69,6 @@ class DatabaseSeeder extends Seeder
         $this->call(GuardianRelationshipSeeder::class);
         $this->call(BloodGroupSeeder::class);
         $this->call(ClassMediumSeeder::class);
+        $this->call(IllnessSeeder::class);
     }
 }

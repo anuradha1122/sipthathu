@@ -10,7 +10,7 @@ use App\Models\WorkPlace;
 class FormEducationDivision extends Component
 {
     public $division;
-    
+
     public $provinces = [];
     public $districts = [];
     public $divisions = [];
@@ -22,6 +22,8 @@ class FormEducationDivision extends Component
     {
         // Load provinces initially
         $this->provinces = Province::where('active', 1)->get();
+        $this->districts = collect();
+        $this->divisions = collect();
     }
 
     public function updatedSelectedProvince($provinceId)
@@ -29,7 +31,7 @@ class FormEducationDivision extends Component
         //dd($provinceId);
         // Load zones when a province is selected
         $this->districts = District::where('provinceId', $provinceId)->get();
-        $this->divisions = []; // Reset divisions
+        $this->divisions = collect(); // Reset divisions
         $this->selectedDistrict = null; // Reset district
     }
 

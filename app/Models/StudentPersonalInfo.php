@@ -16,7 +16,10 @@ class StudentPersonalInfo extends Model
         'religionId',
         'genderId',
         'bloodGroupId',
+        'illnessId',
         'birthDay',
+        'birthCertificate',
+        'birthDsDivisionId',
         'active',
     ];
 }

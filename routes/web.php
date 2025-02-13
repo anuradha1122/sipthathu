@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('auth')->group(function () {
 Route::get('/teacher/dashboard', [UserController::class, 'teacherindex'])->name('teacher.dashboard');
 Route::get('/teacher/register', [UserController::class, 'teachercreate'])->name('teacher.register');
 Route::post('/teacher/register', [UserController::class, 'teacherstore'])->name('teacher.store');
@@ -72,7 +73,7 @@ Route::post('/school/classprofile/{id?}', [SchoolController::class, 'classstore'
 Route::get('/school/dashboard', [SchoolController::class, 'index'])->name('school.dashboard');
 Route::get('/school/reports', [SchoolController::class, 'reports'])->name('school.reports');
 Route::get('/school/classdashboard', [SchoolController::class, 'classindex'])->name('school.classdashboard');
-
+});
 
 
 

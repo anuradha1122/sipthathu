@@ -19,8 +19,9 @@ return new class extends Migration
             $table->string('addressLine3', 80)->nullable();
             $table->string('mobile', 10)->nullable();
             $table->string('guardianName', 80)->nullable();
+            $table->string('guardianNic', 10)->required();
             $table->tinyInteger('guardianRelationshipId')->required();
-            $table->string('guardianMobile', 10)->nullable();
+            $table->string('guardianMobile', 10)->required();
             $table->string('guardianEmail', 80)->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();

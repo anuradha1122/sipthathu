@@ -8,13 +8,16 @@ use App\Models\District;
 use App\Models\DsDivision;
 use App\Models\GnDivision;
 
-class FormGnDivision extends Component
+class StudentBirthLocation extends Component
 {
     public $gnDivision;
 
+
+    public $birthProvinceErr;
+
     public $provinces = [];
-    public $districts = [];
-    public $dsDivisions = [];
+    public $districts;
+    public $dsDivisions;
     public $gnDivisions = [];
 
     public $selectedProvince = null;
@@ -22,8 +25,13 @@ class FormGnDivision extends Component
     public $selectedDsDivision = null;
     public $selectedGnDivision = null;
 
-    public function mount()
+    public $errorsFromController = [];
+
+    public function mount($errorsFromController = null)
     {
+        if ($errorsFromController) {
+            $this->errorsFromController = $errorsFromController->getBag('default')->messages();
+        }
         $this->provinces = Province::where('active', 1)->get();
         $this->districts = collect();
         $this->dsDivisions = collect();
@@ -63,6 +71,6 @@ class FormGnDivision extends Component
 
     public function render()
     {
-        return view('livewire.form-gn-division');
+        return view('livewire.student-birth-location');
     }
 }

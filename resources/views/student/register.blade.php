@@ -8,30 +8,52 @@
                 <form method="POST" action="{{ route('student.register') }}" class="mx-auto mt-8 max-w-xl sm:mt-8" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 gap-x-3 gap-y-3 sm:grid-cols-6">
-                        
+                        <h2 class="sm:col-span-6">Personal Detail</h2>
+                        <hr class="sm:col-span-6">
                         <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" />
                         <x-form-text-input-section size="sm:col-span-2" name="addressLine1" id="addressLine1" label="Address Line 1" />
                         <x-form-text-input-section size="sm:col-span-2" name="addressLine2" id="addressLine2" label="Address Line 2" />
                         <x-form-text-input-section size="sm:col-span-2" name="addressLine3" id="addressLine3" label="Address Line 3" />
-                        <x-form-list-input-section size="sm:col-span-2" name="class" id="class" :options="$classes" label="Class" />
                         <span class="sm:col-span-2">@livewire('formStudentNic')</span>
                         <span class="sm:col-span-2">@livewire('formStudentEmail')</span>
                         <x-form-text-input-section size="sm:col-span-2" name="mobile" id="mobile" label="Mobile (optional)" />
                         <x-form-list-input-section size="sm:col-span-2" name="gender" id="gender" :options="$genders" label="Gender" />
                         <x-form-list-input-section size="sm:col-span-2" name="race" id="race" :options="$races" label="Race" />
                         <x-form-list-input-section size="sm:col-span-2" name="religion" id="religion" :options="$religions" label="Religion" />
-                        <x-form-list-input-section size="sm:col-span-2" name="bloodGroup" id="bloodGroup" :options="$bloodGroups" label="Blood Group (optional)" />
+                        <h2 class="sm:col-span-6">School Detail</h2>
+                        <hr class="sm:col-span-6">
+                        <x-form-list-input-section size="sm:col-span-3" name="class" id="class" :options="$classes" label="Class" />
+                        <x-form-date-input-section size="sm:col-span-3" name="registerDate" id="registerDate" label="Registered Date" />
+
+                        <h2 class="sm:col-span-6">Birth Detail</h2>
+                        <hr class="sm:col-span-6">
+
                         {{-- <x-form-text-input-section size="sm:col-span-2" name="nic" id="nic" label="NIC" /> --}}
-                        
-                        <x-form-date-input-section size="sm:col-span-2" name="birthDay" id="birthDay" label="Birth Day" />
-                        <x-form-date-input-section size="sm:col-span-2" name="registerDate" id="registerDate" label="Registered Date" />
+                        <x-form-number-input-section size="sm:col-span-3" name="birthCertificate" id="birthCertificate" label="Birth Certificate No" value="" />
+                        <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" />
+                        <span class="sm:col-span-6">@livewire('StudentBirthLocation')</span>
+
+                        <h2 class="sm:col-span-6">Health Detail</h2>
+                        <hr class="sm:col-span-6">
+                        <x-form-list-input-section size="sm:col-span-3" name="illness" id="bloodGroup" :options="$bloodGroups" label="Blood Group (optional)" />
+                        <x-form-list-input-section size="sm:col-span-3" name="illness" id="illness" :options="$illnesses" label="Illnesses (optional)" />
+
+                        <h2 class="sm:col-span-6">Guardian Detail</h2>
+                        <hr class="sm:col-span-6">
                         <x-form-text-input-section size="sm:col-span-6" name="guardianName" id="guardianName" label="Guardian Full Name" />
-                        <x-form-list-input-section size="sm:col-span-2" name="guardianRelationship" id="guardianRelationship" :options="$guardianRelationships" label="Guardian Relationship" />
-                        <x-form-text-input-section size="sm:col-span-2" name="Guardian Email" id="guardianEmail" label="guardianEmail (optional)" />
-                        <x-form-text-input-section size="sm:col-span-2" name="guardianMobile" id="guardianMobile" label="Guardian Mobile" />
+                        <x-form-text-input-section size="sm:col-span-3" name="guardianNic" id="guardianNic" label="Guardian NIC" />
+                        <x-form-list-input-section size="sm:col-span-3" name="guardianRelationship" id="guardianRelationship" :options="$guardianRelationships" label="Guardian Relationship" />
+                        <x-form-text-input-section size="sm:col-span-3" name="Guardian Email" id="guardianEmail" label="guardianEmail (optional)" />
+                        <x-form-text-input-section size="sm:col-span-3" name="guardianMobile" id="guardianMobile" label="Guardian Mobile" />
+
+                        <h2 class="sm:col-span-6">Profile Picture</h2>
+                        <hr class="sm:col-span-6">
                         <span class="sm:col-span-4">@livewire('formStudentProfilePicture')</span>
-                        <span class="sm:col-span-4">@livewire('formEducationDivision') </span>
-                        <span class="sm:col-span-4">@livewire('formGnDivision')</span>
+
+                        <h2 class="sm:col-span-6">Location Detail</h2>
+                        <hr class="sm:col-span-6">
+                        <span class="sm:col-span-6">@livewire('formEducationDivision') </span>
+                        <span class="sm:col-span-6">@livewire('formGnDivision')</span>
                     </div>
                     <div class="mt-10">
                         <x-form-button-primary size="" text="Register" modelBinding=""/>
