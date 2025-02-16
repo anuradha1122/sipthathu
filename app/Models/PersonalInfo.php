@@ -17,6 +17,8 @@ class PersonalInfo extends Model
         'civilStatusId',
         'genderId',
         'birthDay',
+        'bloodGroupId',
+        'illnessId',
         'active',
     ];
 }

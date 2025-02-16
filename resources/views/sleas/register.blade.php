@@ -20,7 +20,7 @@
                         <x-form-text-input-section size="sm:col-span-3" name="mobile" id="mobile" label="Mobile" />
                         {{-- <x-form-text-input-section size="sm:col-span-1" name="nic" id="nic" label="NIC" /> --}}
 
-                        <span class="sm:col-span-3">@livewire('formUserSchool')</span>
+                        <span class="sm:col-span-3">@livewire('formUserWorkPlace')</span>
 
                         <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" />
                         <x-form-list-input-section size="sm:col-span-3" name="rank" id="rank" :options="$ranks" label="Service Appointment Rank" />

@@ -3,10 +3,10 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-breadcrumb :list="$option" />
             <div class="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
-                <x-profile-heading heading="{{ $teacher->nameWithInitials }}" subHeading="{{ $teacher->nic }}" image="{{ $teacher->profilePicture }}" />
+                <x-profile-heading heading="{{ $sleas->nameWithInitials }}" subHeading="{{ $sleas->nic }}" image="{{ $sleas->profilePicture }}" />
                 <div class="border-t border-gray-200">
-                    @livewire('teacher-profile', [
-                        'teacher' => $teacher,
+                    @livewire('sleas-profile', [
+                        'sleas' => $sleas,
                         'currentService' => $currentServiceArray,
                         'previousServices' => $previousServicesArray,
                         'currentServiceRanks' => $currentServiceRanksArray,
