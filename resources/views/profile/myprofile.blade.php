@@ -3,11 +3,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-breadcrumb :list="$option" />
             <div class="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
-                <x-profile-heading heading="{{ $teacher->nameWithInitials }}" subHeading="{{ $teacher->nic }}" image="{{ $teacher->profilePicture }}" />
+                <x-profile-heading heading="{{ $user->nameWithInitials }}" subHeading="{{ $user->nic }}" image="{{ $user->profilePicture }}" />
                 <div class="border-t border-gray-200">
                     {{-- {{ print_r($teacher) }} --}}
-                    @livewire('teacher-profile', [
-                        'teacher' => $teacher,
+                    @livewire('my-profile-editable', [
+                        'user' => $user,
                         'currentService' => $currentServiceArray,
                         'previousServices' => $previousServicesArray,
                         'currentServiceRanks' => $currentServiceRanksArray,

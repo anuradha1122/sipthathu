@@ -17,7 +17,7 @@ class FormUserNic extends Component
             'nic' => [
                 'required',
                 'unique:users,nic',
-                'regex:/^([0-9]{9}[Vv]|[0-9]{12})$/', // Matches either 9 digits followed by V/v or 12 digits
+                'regex:/^([0-9]{9}[VvXx]|[0-9]{12})$/', // Matches either 9 digits followed by V/v or 12 digits
             ],
         ];
     }

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,9 +22,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,6 +37,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/myprofile', [UserController::class, 'myprofile'])->name('profile.myprofile');
+    Route::get('/myprofileedit', [UserController::class, 'myprofileedit'])->name('profile.myprofileedit');
+
 Route::get('/teacher/dashboard', [UserController::class, 'teacherindex'])->name('teacher.dashboard');
 Route::get('/teacher/register', [UserController::class, 'teachercreate'])->name('teacher.register');
 Route::post('/teacher/register', [UserController::class, 'teacherstore'])->name('teacher.store');
@@ -39,6 +47,7 @@ Route::get('/teacher/search', [UserController::class, 'teachersearch'])->name('t
 Route::get('/teacher/reports', [UserController::class, 'teacherreports'])->name('teacher.reports');
 Route::get('/teacher/fullreportcurrent', [UserController::class, 'teacherfullreportcurrent'])->name('teacher.fullreportcurrent');
 Route::get('/teacher/profile', [UserController::class, 'teacherprofile'])->name('teacher.profile');
+Route::get('/teacher/profileedit', [UserController::class, 'teacherprofileedit'])->name('teacher.profileedit');
 
 Route::get('/principal/dashboard', [UserController::class, 'principalindex'])->name('principal.dashboard');
 Route::get('/principal/register', [UserController::class, 'principalcreate'])->name('principal.register');

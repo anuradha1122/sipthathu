@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreDashboardRequest;
 use App\Http\Requests\UpdateDashboardRequest;
 use App\Models\Dashboard;
@@ -11,9 +12,31 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        //dd(Session::all());
+        // Example: render different views
+        if (session('workPlaceCategoryId') == 1) {
+            return view('dashboard');
+        }
+
+        if (session('workPlaceCategoryId') == 2) {
+            switch (session('officeTypeId')) {
+                case 1:
+                    return view('dashboard');
+                case 2:
+                    return view('dashboard');
+                case 3:
+                    return view('dashboard');
+            }
+        }
+
+        if (session('workPlaceCategoryId') == 3) {
+            return view('dashboard');
+        }
+
+        // Fallback view
+        return view('dashboard');
     }
 
     /**

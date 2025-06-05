@@ -12,19 +12,18 @@
 
                         {{-- @error('book') <span class="text-red-500">{{ $message }}</span> @enderror --}}
 
-                        <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" />
-                        <x-form-text-input-section size="sm:col-span-6" name="addressLine1" id="addressLine1" label="Address Line 1" />
-                        <x-form-text-input-section size="sm:col-span-3" name="addressLine2" id="addressLine2" label="Address Line 2" />
-                        <x-form-text-input-section size="sm:col-span-3" name="addressLine3" id="addressLine3" label="Address Line 3" />
+                        <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" value="{{ old('name') }}" />
+                        <x-form-text-input-section size="sm:col-span-6" name="addressLine1" id="addressLine1" label="Address Line 1" value="{{ old('addressLine1') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="addressLine2" id="addressLine2" label="Address Line 2" value="{{ old('addressLine2') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="addressLine3" id="addressLine3" label="Address Line 3" value="{{ old('addressLine3') }}" />
                         <span class="sm:col-span-3">@livewire('formUserNic')</span>
-                        <x-form-text-input-section size="sm:col-span-3" name="mobile" id="mobile" label="Mobile" />
-                        {{-- <x-form-text-input-section size="sm:col-span-1" name="nic" id="nic" label="NIC" /> --}}
+                        <x-form-text-input-section size="sm:col-span-3" name="mobile" id="mobile" label="Mobile" value="{{ old('mobile') }}" />
 
                         <span class="sm:col-span-3">@livewire('formUserWorkPlace')</span>
 
-                        <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" />
+                        <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" value="{{ old('birthDay') }}" />
                         <x-form-list-input-section size="sm:col-span-3" name="rank" id="rank" :options="$ranks" label="Service Appointment Rank" />
-                        <x-form-date-input-section size="sm:col-span-3" name="serviceDate" id="serviceDate" label="Service Appointed Date" />
+                        <x-form-date-input-section size="sm:col-span-3" name="serviceDate" id="serviceDate" label="Service Appointed Date" value="{{ old('serviceDate') }}" />
                         <span class="sm:col-span-4">@livewire('formUserProfilePicture')</span>
                     </div>
                     <div class="mt-10">

@@ -25,5 +25,5 @@
     @endif
 
 
-    <x-table-action link="" />
+    <x-table-action action="{{ $action }}" link="{{ $link }}" :params="$params" />
 </tr>

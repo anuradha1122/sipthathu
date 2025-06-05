@@ -1,6 +1,6 @@
 <div class="{{ $size }}">
     <div class="mt-2.5 px-4">
-        <x-form-text-input-field wire:model.live="search" id="search" name="search" autofocus/>
+        <x-form-text-input-field wire:model.live="search" id="search" name="search" value="" autofocus/>
     </div>
     @if(session('error'))
     <div class="alert alert-danger px-4">

@@ -9,9 +9,15 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Subject;
 use App\Models\AppointmentMedium;
 use App\Models\AppointmentCategory;
+use App\Models\Race;
+use App\Models\CivilStatus;
+use App\Models\Religion;
+use App\Models\BloodGroup;
+use App\Models\Illness;
 use App\Models\Rank;
 use App\Models\User;
 use App\Models\UserInService;
+use App\Models\Service;
 use App\Models\UserServiceInRank;
 use App\Models\UserServiceAppointment;
 use App\Models\UserServiceAppointmentPosition;
@@ -25,12 +31,846 @@ use App\Models\FamilyInfo;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public function myprofile()
+    {
+        //dd(session('serviceId'));
+        if(session('serviceId')){
+            if(Auth::user()->id){
+                try{
+
+                    $option = [
+                        'Dashboard' => 'dashboard',
+                        'My Profile' => route('profile.myprofile'),
+                    ];
+
+                    //$decryptedId = Crypt::decryptString($request->id);
+                    //dd($decryptedId);
+                    $user = User::leftjoin('personal_infos', 'users.id', '=', 'personal_infos.userId')
+                    ->leftjoin('races', 'personal_infos.raceId', '=', 'races.id')
+                    ->leftjoin('religions', 'personal_infos.religionId', '=', 'religions.id')
+                    ->leftjoin('civil_statuses', 'personal_infos.civilStatusId', '=', 'civil_statuses.id')
+                    ->leftjoin('contact_infos', 'users.id', '=', 'contact_infos.userId')
+                    ->leftjoin('location_infos', 'users.id', '=', 'location_infos.userId')
+                    //->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
+                    ->leftjoin('work_places AS educationDivisions', 'location_infos.educationDivisionId', '=', 'educationDivisions.id')
+                    ->leftjoin('gn_divisions', 'location_infos.gnDivisionId', '=', 'gn_divisions.id')
+                    ->leftjoin('ds_divisions', 'gn_divisions.dsId', '=', 'ds_divisions.id')
+                    ->leftjoin('districts', 'ds_divisions.districtId', '=', 'districts.id')
+                    ->leftjoin('provinces', 'districts.provinceId', '=', 'provinces.id')
+                    ->where('users.id', Auth::user()->id)
+                    ->select(
+                        'users.id AS userId','users.name AS name','users.nic','users.email','users.nameWithInitials',
+                        'personal_infos.birthDay','personal_infos.profilePicture',
+                        DB::raw("CASE
+                            WHEN personal_infos.genderId = 1 THEN 'Male'
+                            WHEN personal_infos.genderId = 2 THEN 'Female'
+                            ELSE 'Unknown'
+                        END AS gender"),
+                        'races.name AS race',
+                        'religions.name AS religion',
+                        'civil_statuses.name AS civilStatus',
+                        'contact_infos.*',
+                        'educationDivisions.name AS educationDivision',
+                        'gn_divisions.name AS gnDivision',
+                        'ds_divisions.name AS dsDivision',
+                        'districts.name AS district',
+                        'provinces.name AS province',
+                    )
+                    ->first();
+
+                    $combinedData = UserInService::join('services', 'user_in_services.serviceId', '=', 'services.id')
+                        ->leftJoin('user_service_in_ranks', 'user_in_services.id', '=', 'user_service_in_ranks.userServiceId')
+                        ->leftJoin('ranks', 'user_service_in_ranks.rankId', '=', 'ranks.id')
+                        ->where('user_in_services.userId', Auth::user()->id)
+                        ->select(
+                            'user_in_services.id AS userServiceId',
+                            'user_in_services.appointedDate',
+                            'user_in_services.releasedDate',
+                            'user_in_services.current AS currentService',
+                            'services.name AS serviceName',
+                            'user_service_in_ranks.id AS serviceRankId',
+                            'user_service_in_ranks.rankId',
+                            'user_service_in_ranks.rankedDate',
+                            'user_service_in_ranks.current AS currentRank',
+                            'ranks.name AS rank'
+                        )
+                        ->get();
+
+                    // Partition services into current and previous
+                    $partitionedData = $combinedData->partition(function ($item) {
+                        return $item->currentService == 1 && is_null($item->releasedDate);
+                    });
+
+                    // Get distinct current services (no ranks)
+                    $currentService = $partitionedData[0]
+                        ->unique('userServiceId')
+                        ->map(function ($item) {
+                            $servicePeriod = "from {$item->appointedDate} to " . ($item->releasedDate ?? 'present');
+                            return [
+                                'userServiceId' => $item->userServiceId,
+                                'formattedService' => "{$item->serviceName} {$servicePeriod}",
+                            ];
+                        }); // Keep as a collection
+
+                    // Extract current service IDs
+                    $currentServiceIds = $currentService->pluck('userServiceId');
+
+                    // If you need to convert $currentService to an array for Blade:
+                    $currentServiceArray = $currentService->pluck('formattedService', 'userServiceId')->toArray();
+
+
+                    $previousServices = $partitionedData[1]
+                    ->unique('userServiceId')
+                    ->map(function ($item) {
+                        $servicePeriod = "from {$item->appointedDate} to " . ($item->releasedDate ?? 'present');
+                        return [
+                            'userServiceId' => $item->userServiceId,
+                            'formattedService' => "{$item->serviceName} {$servicePeriod}",
+                        ];
+                    }); // Keep as a collection
+
+                    $previousServiceIds = $previousServices->pluck('userServiceId');
+
+                    // If you need to convert $previousServices to an array for Blade:
+                    $previousServicesArray = $previousServices->pluck('formattedService', 'userServiceId')->toArray();
+
+
+                    $currentServiceRanks = $combinedData->filter(function ($item) use ($currentServiceIds) {
+                        return $currentServiceIds->contains($item->userServiceId) && !is_null($item->serviceRankId);
+                    })->map(function ($item) {
+                        $rankPeriod = "from {$item->rankedDate}";
+                        return [
+                            'userServiceId' => $item->userServiceId,
+                            'formattedRank' => "{$item->rank} {$rankPeriod}",
+                        ];
+                    });
+
+                    // Convert to an array for Blade if needed
+                    $currentServiceRanksArray = $currentServiceRanks->pluck('formattedRank', 'userServiceId')->toArray();
+
+                    $previousServiceRanks = $combinedData->filter(function ($item) use ($previousServiceIds) {
+                        return $previousServiceIds->contains($item->userServiceId) && !is_null($item->serviceRankId);
+                    })->map(function ($item) {
+                        $rankPeriod = "from {$item->rankedDate}";
+                        return [
+                            'userServiceId' => $item->userServiceId,
+                            'formattedRank' => "{$item->rank} {$rankPeriod}",
+                        ];
+                    });
+
+                    // Convert to an array for Blade if needed
+                    $previousServiceRanksArray = $previousServiceRanks->pluck('formattedRank', 'userServiceId')->toArray();
+
+
+                    // Fetch appointments and categorize them into current and previous based on the service IDs
+                    $appointments = UserServiceAppointment::join('work_places', 'user_service_appointments.workPlaceId', '=', 'work_places.id')
+                    ->whereIn('user_service_appointments.userServiceId', $currentServiceIds)
+                    ->orWhereIn('user_service_appointments.userServiceId', $previousServiceIds)
+                    ->select(
+                        'user_service_appointments.*',
+                        'work_places.name AS workPlaceName',
+                        'work_places.censusNo AS censusNo',
+                        'work_places.categoryId AS workPlaceCategory'
+                    )
+                    ->get();
+
+                    // Partition appointments into categories based on their attributes
+                    $appointmentsPartitioned = $appointments->groupBy(function ($appointment) {
+                    if ($appointment->current == 1 && is_null($appointment->releasedDate)) {
+                        return $appointment->appointmentType == 1 ? 'currentAppointments' : 'currentAttachAppointments';
+                    } elseif ($appointment->current == 0 && !is_null($appointment->releasedDate)) {
+                        return $appointment->appointmentType == 1 ? 'previousAppointments' : 'previousAttachAppointments';
+                    }
+                    return null; // Ignore other cases
+                    });
+
+                    // Map the partitions to IDs
+                    $currentAppointmentIds = $appointmentsPartitioned->get('currentAppointments', collect())->pluck('id')->toArray();
+                    $previousAppointmentIds = $appointmentsPartitioned->get('previousAppointments', collect())->pluck('id')->toArray();
+                    $currentAttachAppointmentIds = $appointmentsPartitioned->get('currentAttachAppointments', collect())->pluck('id')->toArray();
+                    $previousAttachAppointmentIds = $appointmentsPartitioned->get('previousAttachAppointments', collect())->pluck('id')->toArray();
+
+                    // Format and return results for each category
+                    $currentAppointments = $appointmentsPartitioned->get('currentAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+                    $previousAppointments = $appointmentsPartitioned->get('previousAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate} to {$appointment->releasedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+                    $currentAttachAppointments = $appointmentsPartitioned->get('currentAttachAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+                    $previousAttachAppointments = $appointmentsPartitioned->get('previousAttachAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate} to {$appointment->releasedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+
+                    $positions = UserServiceAppointmentPosition::join('positions', 'user_service_appointment_positions.positionId', '=', 'positions.id')
+                        ->whereIn('user_service_appointment_positions.userServiceAppointmentId', array_merge(
+                            $currentAppointmentIds,
+                            $previousAppointmentIds,
+                            $currentAttachAppointmentIds,
+                            $previousAttachAppointmentIds
+                        ))
+                        ->select(
+                            'user_service_appointment_positions.*',
+                            'positions.name AS position'
+                        )
+                        ->get();
+
+                    // Partition positions into categories based on appointment IDs
+                    $positionsPartitioned = $positions->groupBy(function ($position) use (
+                        $currentAppointmentIds,
+                        $previousAppointmentIds,
+                        $currentAttachAppointmentIds,
+                        $previousAttachAppointmentIds,
+                    ) {
+                        if (in_array($position->userServiceAppointmentId, $currentAppointmentIds)) {
+                            return 'currentPositions';
+                        } elseif (in_array($position->userServiceAppointmentId, $previousAppointmentIds)) {
+                            return 'previousPositions';
+                        } elseif (in_array($position->userServiceAppointmentId, $currentAttachAppointmentIds)) {
+                            return 'currentAttachPositions';
+                        } elseif (in_array($position->userServiceAppointmentId, $previousAttachAppointmentIds)) {
+                            return 'previousAttachPositions';
+                        }
+                        return null; // Ignore other cases
+                    });
+
+                    // Map the partitions to structured data
+                    $currentPositions = $positionsPartitioned->get('currentPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+                    $previousPositions = $positionsPartitioned->get('previousPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+                    $currentAttachPositions = $positionsPartitioned->get('currentAttachPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+                    $previousAttachPositions = $positionsPartitioned->get('previousAttachPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+
+                    $educationQualifications = EducationQualification::join('education_qualification_infos', 'education_qualification_infos.educationQualificationId', '=', 'education_qualifications.id')
+                    ->where('education_qualification_infos.userId', Auth::user()->id)
+                    ->where('education_qualification_infos.active', 1)
+                    ->where('education_qualifications.active', 1)
+                    ->selectRaw("GROUP_CONCAT(CONCAT(education_qualifications.name, ' Effective from ', education_qualification_infos.effectiveDate) SEPARATOR '\n') as formattedOutput")
+                    ->pluck('formattedOutput')
+                    ->first();
+
+
+                    $professionalQualifications = professionalQualification::join('professional_qualification_infos', 'professional_qualification_infos.professionalQualificationId', '=', 'professional_qualifications.id')
+                    ->where('professional_qualification_infos.userId', Auth::user()->id)
+                    ->where('professional_qualification_infos.active', 1)
+                    ->where('professional_qualifications.active', 1)
+                    ->selectRaw("GROUP_CONCAT(CONCAT(professional_qualifications.name, ' Effective from ', professional_qualification_infos.effectiveDate) SEPARATOR '\n') as formattedOutput")
+                    ->pluck('formattedOutput')
+                    ->first();
+
+                    $family = FamilyInfo::join('family_member_types', 'family_infos.memberType', '=', 'family_member_types.id')
+                    ->where('family_infos.userId', Auth::user()->id)
+                    ->where('family_infos.active', 1)
+                    ->selectRaw("GROUP_CONCAT(CONCAT(family_infos.name, ' ( ', family_infos.nic, ' ', family_member_types.name, ' ', family_infos.profession, ' )') SEPARATOR '\n') as formattedOutput")
+                    ->pluck('formattedOutput')
+                    ->first();
+
+
+
+                    //dd($family);
+                    return view('profile/myprofile', compact(
+                        'user',
+                        'currentServiceArray',
+                        'previousServicesArray',
+                        'currentServiceRanksArray',
+                        'previousServiceRanksArray',
+                        'currentAppointments',
+                        'previousAppointments',
+                        'currentAttachAppointments',
+                        'previousAttachAppointments',
+                        'currentPositions',
+                        'previousPositions',
+                        'currentAttachPositions',
+                        'previousAttachPositions',
+                        'educationQualifications',
+                        'professionalQualifications',
+                        'family',
+                        'option'
+                    ));
+
+
+                }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    // Redirect to the search page or show an error message for invalid ID
+                    return redirect()->route('teacher.search')->with('error', 'Invalid teacher ID provided.');
+                }
+
+            }else{
+                return redirect()->route('dashboard');
+            }
+        }
+    }
+
+    public function myprofileedit(Request $request)
+    {
+        //dd($request->category);
+        //dd(Auth::check(), Auth::user(), Auth::id());
+
+        //dd($request->has('category'), $request->input('category'));
+
+        if (Auth::check() && $request->has('category')) {
+            try{
+
+                $option = [
+                    'Dashboard' => 'dashboard',
+                    'My Profile' => route('profile.myprofile'),
+                    'My Profile Edit' => htmlspecialchars_decode(route('profile.myprofileedit',['category' => $request->category])),
+                ];
+
+                $category = $request->category;
+
+                $user = User::find(Auth::user()->id);
+
+                $races = collect([]);
+                $religions = collect([]);
+                $civilStatuses = collect([]);
+                $bloodGroups = collect([]);
+                $illnesses = collect([]);
+
+                $personal_infos = null;
+
+                if($category == 'personal')
+                {
+                    $races = Race::where('active', 1)->get();
+                    $religions = Religion::where('active', 1)->get();
+                    $civilStatuses = CivilStatus::where('active', 1)->get();
+                    $bloodGroups = BloodGroup::where('active', 1)->get();
+                    $illnesses = Illness::where('active', 1)->get();
+
+                    $personal_infos = DB::table('personal_infos')
+                    ->leftJoin('races', function ($join) {
+                        $join->on('personal_infos.raceId', '=', 'races.id')
+                            ->where('races.active', 1);
+                    })
+                    ->leftJoin('religions', function ($join) {
+                        $join->on('personal_infos.religionId', '=', 'religions.id')
+                            ->where('religions.active', 1);
+                    })
+                    ->leftJoin('civil_statuses', function ($join) {
+                        $join->on('personal_infos.civilStatusId', '=', 'civil_statuses.id')
+                            ->where('civil_statuses.active', 1);
+                    })
+                    ->leftJoin('blood_groups', function ($join) {
+                        $join->on('personal_infos.bloodGroupId', '=', 'blood_groups.id')
+                            ->where('blood_groups.active', 1);
+                    })
+                    ->leftJoin('illnesses', function ($join) {
+                        $join->on('personal_infos.illnessId', '=', 'illnesses.id')
+                            ->where('illnesses.active', 1);
+                    })
+                    ->where('personal_infos.active', 1)
+                    ->where('personal_infos.userId', Auth::user()->id)
+                    ->select(
+                        'personal_infos.birthDay',
+                        'races.name as race',
+                        'religions.name as religion',
+                        'civil_statuses.name as civil_status',
+                        'blood_groups.name as blood_group',
+                        'illnesses.name as illness'
+                    )
+                    ->first();
+                }
+
+                $contact_infos = null;
+                if($category == 'contact')
+                {
+
+                    $contact_infos = DB::table('contact_infos')
+                    ->where('active', 1)
+                    ->where('userId', Auth::id())
+                    ->first();
+                    //dd($contact_infos);
+                }
+
+                $location_info_educations = null;
+                $location_info_positions = null;
+                if($category == 'location')
+                {
+                    $location_info_educations = DB::table('location_infos')
+                    ->join('offices as division', 'location_infos.educationDivisionId', '=', 'division.id')
+                    ->join('offices as zone', 'division.higherOfficeId', '=', 'zone.id')
+                    ->join('offices as province', 'zone.higherOfficeId', '=', 'province.id')
+                    ->join('work_places as division_wp', 'division.workPlaceId', '=', 'division_wp.id')
+                    ->join('work_places as zone_wp', 'zone.workPlaceId', '=', 'zone_wp.id')
+                    ->join('work_places as province_wp', 'province.workPlaceId', '=', 'province_wp.id')
+                    ->select(
+                        'location_infos.*',
+                        // 'division.name as division_name',
+                        // 'zone.name as zone_name',
+                        // 'province.name as province_name',
+                        'division_wp.name as division',
+                        'zone_wp.name as zone',
+                        'province_wp.name as department'
+                    )
+                    ->where('location_infos.active', 1) // optional: filter active
+                    ->where('location_infos.userId', Auth::id())
+                    ->first();
+                    //dd($location_infos);
+
+                    $location_info_positions = DB::table('location_infos')
+                        ->join('gn_divisions', 'location_infos.gnDivisionId', '=', 'gn_divisions.id')
+                        ->join('ds_divisions', 'gn_divisions.dsId', '=', 'ds_divisions.id')
+                        ->join('districts', 'ds_divisions.districtId', '=', 'districts.id')
+                        ->join('provinces', 'districts.provinceId', '=', 'provinces.id')
+                        ->select(
+                            'location_infos.*',
+                            'gn_divisions.name as gn_division',
+                            'gn_divisions.gnCode',
+                            'ds_divisions.name as ds_division',
+                            'districts.name as district',
+                            'provinces.name as province'
+                        )
+                        ->where('location_infos.active', 1)
+                        ->where('location_infos.userId', Auth::id())
+                        ->first();
+                }
+
+
+                $services = collect([]);
+                $current_service_infos = collect([]);
+                $previous_service_infos = collect([]);
+
+                // if($category == 'service')
+                // {
+                //     $services = Service::where('active', 1)->get();
+                //     $service_infos = DB::table('user_in_services')
+                //         ->join('services', 'user_in_services.serviceId', '=', 'services.id')
+                //         ->where('user_in_services.userId', Auth::id())
+                //         ->select('user_in_services.id AS id', 'user_in_services.*', 'services.name AS name') // adjust fields as needed
+                //         ->get();
+
+                //         // Divide into two arrays
+                //         $current_service_infos = $service_infos->filter(function ($item) {
+                //             return is_null($item->releasedDate);
+                //         })->values();
+
+                //         $previous_service_infos = $service_infos->filter(function ($item) {
+                //             return !is_null($item->releasedDate);
+                //         })->values();
+                //     //dd($service_infos);
+                // }
+
+                $appointment_lists = collect([]);
+                if($category == 'appointment')
+                {
+                    $appointment_lists = DB::table('user_in_services')
+                    ->join('services', 'user_in_services.serviceId', '=', 'services.id')
+                    ->join('user_service_appointments', 'user_service_appointments.userServiceId', '=', 'user_in_services.id')
+                    ->join('work_places', 'work_places.id', '=', 'user_service_appointments.workPlaceId')
+                    ->where('user_in_services.userId', $user->id)
+                    ->where('user_in_services.active', 1)
+                    ->where('services.active', 1)
+                    ->where('user_service_appointments.active', 1)
+                    ->where('work_places.active', 1)
+                    ->whereNotNull('user_service_appointments.releasedDate')
+                    ->select(
+                        'user_service_appointments.id as id',
+                        DB::raw("CONCAT(services.name, ' | ', work_places.name, ' | ', user_service_appointments.appointedDate, ' - ', user_service_appointments.releasedDate) as name")
+                    )
+                    ->get();
+
+                }
+
+                $educationQualifications = collect([]);
+                $professionalQualifications = collect([]);
+                if($category == 'qualification')
+                {
+                    $educationQualifications = EducationQualification::where('active', 1)->get();
+                    $professionalQualifications = ProfessionalQualification::where('active', 1)->get();
+                }
+
+                $ranks = collect([]);
+                if($category == 'rank')
+                {
+                    $ranks = Rank::where('active', 1)
+                    ->where('serviceId', 1)
+                    ->get();
+
+                }
+
+                return view('profile/myprofileedit', compact(
+                    'user',
+                    'category',
+                    'races',
+                    'religions',
+                    'civilStatuses',
+                    'bloodGroups',
+                    'illnesses',
+                    'personal_infos',
+                    'contact_infos',
+                    'location_info_educations',
+                    'location_info_positions',
+                    'services',
+                    'current_service_infos',
+                    'previous_service_infos',
+                    'appointment_lists',
+                    'educationQualifications',
+                    'professionalQualifications',
+                    'ranks',
+                    'option'
+                ));
+
+
+            }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                // Redirect to the search page or show an error message for invalid ID
+                return redirect()->route('profile.myprofile')->with('error', 'Invalid User ID provided.');
+            }
+
+        }else{
+            dd('adad');
+            //return redirect()->route('teacher.search');
+        }
+    }
+
+    public function myappointment()
+    {
+        //dd(session('serviceId'));
+        if(session('serviceId')){
+            if(Auth::user()->id){
+                try{
+
+                    $option = [
+                        'Dashboard' => 'dashboard',
+                        'My Profile' => route('profile.myprofile'),
+                    ];
+
+                    $services = UserInService::join('services', 'user_in_services.serviceId', '=', 'services.id')
+                        ->leftJoin('user_service_in_ranks', 'user_in_services.id', '=', 'user_service_in_ranks.userServiceId')
+                        ->leftJoin('ranks', 'user_service_in_ranks.rankId', '=', 'ranks.id')
+                        ->where('user_in_services.userId', Auth::user()->id)
+                        ->select(
+                            'user_in_services.id AS userServiceId',
+                            'user_in_services.appointedDate',
+                            'user_in_services.releasedDate',
+                            'user_in_services.current AS currentService',
+                            'services.name AS serviceName',
+                            'user_service_in_ranks.id AS serviceRankId',
+                            'user_service_in_ranks.rankId',
+                            'user_service_in_ranks.rankedDate',
+                            'user_service_in_ranks.current AS currentRank',
+                            'ranks.name AS rank'
+                        )
+                        ->get();
+
+                    // Partition services into current and previous
+                    $partitionedData = $services->partition(function ($item) {
+                        return $item->currentService == 1 && is_null($item->releasedDate);
+                    });
+
+                    // Get distinct current services (no ranks)
+                    $currentService = $partitionedData[0]
+                        ->unique('userServiceId')
+                        ->map(function ($item) {
+                            $servicePeriod = "from {$item->appointedDate} to " . ($item->releasedDate ?? 'present');
+                            return [
+                                'userServiceId' => $item->userServiceId,
+                                'formattedService' => "{$item->serviceName} {$servicePeriod}",
+                            ];
+                        }); // Keep as a collection
+
+                    // Extract current service IDs
+                    $currentServiceIds = $currentService->pluck('userServiceId');
+
+                    // If you need to convert $currentService to an array for Blade:
+                    $currentServiceArray = $currentService->pluck('formattedService', 'userServiceId')->toArray();
+
+
+                    $previousServices = $partitionedData[1]
+                    ->unique('userServiceId')
+                    ->map(function ($item) {
+                        $servicePeriod = "from {$item->appointedDate} to " . ($item->releasedDate ?? 'present');
+                        return [
+                            'userServiceId' => $item->userServiceId,
+                            'formattedService' => "{$item->serviceName} {$servicePeriod}",
+                        ];
+                    }); // Keep as a collection
+
+                    $previousServiceIds = $previousServices->pluck('userServiceId');
+
+                    // If you need to convert $previousServices to an array for Blade:
+                    $previousServicesArray = $previousServices->pluck('formattedService', 'userServiceId')->toArray();
+
+
+                    $currentServiceRanks = $combinedData->filter(function ($item) use ($currentServiceIds) {
+                        return $currentServiceIds->contains($item->userServiceId) && !is_null($item->serviceRankId);
+                    })->map(function ($item) {
+                        $rankPeriod = "from {$item->rankedDate}";
+                        return [
+                            'userServiceId' => $item->userServiceId,
+                            'formattedRank' => "{$item->rank} {$rankPeriod}",
+                        ];
+                    });
+
+                    // Convert to an array for Blade if needed
+                    $currentServiceRanksArray = $currentServiceRanks->pluck('formattedRank', 'userServiceId')->toArray();
+
+                    $previousServiceRanks = $combinedData->filter(function ($item) use ($previousServiceIds) {
+                        return $previousServiceIds->contains($item->userServiceId) && !is_null($item->serviceRankId);
+                    })->map(function ($item) {
+                        $rankPeriod = "from {$item->rankedDate}";
+                        return [
+                            'userServiceId' => $item->userServiceId,
+                            'formattedRank' => "{$item->rank} {$rankPeriod}",
+                        ];
+                    });
+
+                    // Convert to an array for Blade if needed
+                    $previousServiceRanksArray = $previousServiceRanks->pluck('formattedRank', 'userServiceId')->toArray();
+
+
+                    // Fetch appointments and categorize them into current and previous based on the service IDs
+                    $appointments = UserServiceAppointment::join('work_places', 'user_service_appointments.workPlaceId', '=', 'work_places.id')
+                    ->whereIn('user_service_appointments.userServiceId', $currentServiceIds)
+                    ->orWhereIn('user_service_appointments.userServiceId', $previousServiceIds)
+                    ->select(
+                        'user_service_appointments.*',
+                        'work_places.name AS workPlaceName',
+                        'work_places.censusNo AS censusNo',
+                        'work_places.categoryId AS workPlaceCategory'
+                    )
+                    ->get();
+
+                    // Partition appointments into categories based on their attributes
+                    $appointmentsPartitioned = $appointments->groupBy(function ($appointment) {
+                    if ($appointment->current == 1 && is_null($appointment->releasedDate)) {
+                        return $appointment->appointmentType == 1 ? 'currentAppointments' : 'currentAttachAppointments';
+                    } elseif ($appointment->current == 0 && !is_null($appointment->releasedDate)) {
+                        return $appointment->appointmentType == 1 ? 'previousAppointments' : 'previousAttachAppointments';
+                    }
+                    return null; // Ignore other cases
+                    });
+
+                    // Map the partitions to IDs
+                    $currentAppointmentIds = $appointmentsPartitioned->get('currentAppointments', collect())->pluck('id')->toArray();
+                    $previousAppointmentIds = $appointmentsPartitioned->get('previousAppointments', collect())->pluck('id')->toArray();
+                    $currentAttachAppointmentIds = $appointmentsPartitioned->get('currentAttachAppointments', collect())->pluck('id')->toArray();
+                    $previousAttachAppointmentIds = $appointmentsPartitioned->get('previousAttachAppointments', collect())->pluck('id')->toArray();
+
+                    // Format and return results for each category
+                    $currentAppointments = $appointmentsPartitioned->get('currentAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+                    $previousAppointments = $appointmentsPartitioned->get('previousAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate} to {$appointment->releasedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+                    $currentAttachAppointments = $appointmentsPartitioned->get('currentAttachAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+                    $previousAttachAppointments = $appointmentsPartitioned->get('previousAttachAppointments', collect())
+                    ->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate} to {$appointment->releasedDate}",
+                        ];
+                    })->pluck('formattedAppointment', 'id')->toArray();
+
+
+                    $positions = UserServiceAppointmentPosition::join('positions', 'user_service_appointment_positions.positionId', '=', 'positions.id')
+                        ->whereIn('user_service_appointment_positions.userServiceAppointmentId', array_merge(
+                            $currentAppointmentIds,
+                            $previousAppointmentIds,
+                            $currentAttachAppointmentIds,
+                            $previousAttachAppointmentIds
+                        ))
+                        ->select(
+                            'user_service_appointment_positions.*',
+                            'positions.name AS position'
+                        )
+                        ->get();
+
+                    // Partition positions into categories based on appointment IDs
+                    $positionsPartitioned = $positions->groupBy(function ($position) use (
+                        $currentAppointmentIds,
+                        $previousAppointmentIds,
+                        $currentAttachAppointmentIds,
+                        $previousAttachAppointmentIds,
+                    ) {
+                        if (in_array($position->userServiceAppointmentId, $currentAppointmentIds)) {
+                            return 'currentPositions';
+                        } elseif (in_array($position->userServiceAppointmentId, $previousAppointmentIds)) {
+                            return 'previousPositions';
+                        } elseif (in_array($position->userServiceAppointmentId, $currentAttachAppointmentIds)) {
+                            return 'currentAttachPositions';
+                        } elseif (in_array($position->userServiceAppointmentId, $previousAttachAppointmentIds)) {
+                            return 'previousAttachPositions';
+                        }
+                        return null; // Ignore other cases
+                    });
+
+                    // Map the partitions to structured data
+                    $currentPositions = $positionsPartitioned->get('currentPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+                    $previousPositions = $positionsPartitioned->get('previousPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+                    $currentAttachPositions = $positionsPartitioned->get('currentAttachPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+                    $previousAttachPositions = $positionsPartitioned->get('previousAttachPositions', collect())
+                        ->map(function ($position) {
+                            return [
+                                'id' => $position->id,
+                                'positionName' => $position->position,
+                                'details' => $position->toArray(),
+                            ];
+                    })->values();
+
+
+                    $educationQualifications = EducationQualification::join('education_qualification_infos', 'education_qualification_infos.educationQualificationId', '=', 'education_qualifications.id')
+                    ->where('education_qualification_infos.userId', Auth::user()->id)
+                    ->where('education_qualification_infos.active', 1)
+                    ->where('education_qualifications.active', 1)
+                    ->selectRaw("GROUP_CONCAT(CONCAT(education_qualifications.name, ' Effective from ', education_qualification_infos.effectiveDate) SEPARATOR '\n') as formattedOutput")
+                    ->pluck('formattedOutput')
+                    ->first();
+
+
+                    $professionalQualifications = professionalQualification::join('professional_qualification_infos', 'professional_qualification_infos.professionalQualificationId', '=', 'professional_qualifications.id')
+                    ->where('professional_qualification_infos.userId', Auth::user()->id)
+                    ->where('professional_qualification_infos.active', 1)
+                    ->where('professional_qualifications.active', 1)
+                    ->selectRaw("GROUP_CONCAT(CONCAT(professional_qualifications.name, ' Effective from ', professional_qualification_infos.effectiveDate) SEPARATOR '\n') as formattedOutput")
+                    ->pluck('formattedOutput')
+                    ->first();
+
+                    $family = FamilyInfo::join('family_member_types', 'family_infos.memberType', '=', 'family_member_types.id')
+                    ->where('family_infos.userId', Auth::user()->id)
+                    ->where('family_infos.active', 1)
+                    ->selectRaw("GROUP_CONCAT(CONCAT(family_infos.name, ' ( ', family_infos.nic, ' ', family_member_types.name, ' ', family_infos.profession, ' )') SEPARATOR '\n') as formattedOutput")
+                    ->pluck('formattedOutput')
+                    ->first();
+
+
+
+                    //dd($family);
+                    return view('profile/myprofile', compact(
+                        'user',
+                        'currentServiceArray',
+                        'previousServicesArray',
+                        'currentServiceRanksArray',
+                        'previousServiceRanksArray',
+                        'currentAppointments',
+                        'previousAppointments',
+                        'currentAttachAppointments',
+                        'previousAttachAppointments',
+                        'currentPositions',
+                        'previousPositions',
+                        'currentAttachPositions',
+                        'previousAttachPositions',
+                        'educationQualifications',
+                        'professionalQualifications',
+                        'family',
+                        'option'
+                    ));
+
+
+                }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    // Redirect to the search page or show an error message for invalid ID
+                    return redirect()->route('teacher.search')->with('error', 'Invalid teacher ID provided.');
+                }
+
+            }else{
+                return redirect()->route('teacher.search');
+            }
+        }
+    }
+
     public function teacherindex()
     {
         $teacherQuery = DB::table('users')
@@ -645,14 +1485,14 @@ class UserController extends Controller
 
                 $decryptedId = Crypt::decryptString($request->id);
                 //dd($decryptedId);
-                $teacher = User::join('personal_infos', 'users.id', '=', 'personal_infos.userId')
+                $teacher = User::leftjoin('personal_infos', 'users.id', '=', 'personal_infos.userId')
                 ->leftjoin('races', 'personal_infos.raceId', '=', 'races.id')
                 ->leftjoin('religions', 'personal_infos.religionId', '=', 'religions.id')
                 ->leftjoin('civil_statuses', 'personal_infos.civilStatusId', '=', 'civil_statuses.id')
                 ->leftjoin('contact_infos', 'users.id', '=', 'contact_infos.userId')
                 ->leftjoin('location_infos', 'users.id', '=', 'location_infos.userId')
-                ->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
-                ->leftjoin('work_places AS educationDivisions', 'offices.workPlaceId', '=', 'educationDivisions.id')
+                //->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
+                ->leftjoin('work_places AS educationDivisions', 'location_infos.educationDivisionId', '=', 'educationDivisions.id')
                 ->leftjoin('gn_divisions', 'location_infos.gnDivisionId', '=', 'gn_divisions.id')
                 ->leftjoin('ds_divisions', 'gn_divisions.dsId', '=', 'ds_divisions.id')
                 ->leftjoin('districts', 'ds_divisions.districtId', '=', 'districts.id')
@@ -677,7 +1517,9 @@ class UserController extends Controller
                     'provinces.name AS province',
                 )
                 ->first();
-                //dd($teacher);
+                if ($teacher) {
+                    $teacher->cryptedId = $request->id;
+                }
 
                 $combinedData = UserInService::join('services', 'user_in_services.serviceId', '=', 'services.id')
                     ->leftJoin('user_service_in_ranks', 'user_in_services.id', '=', 'user_service_in_ranks.userServiceId')
@@ -973,8 +1815,8 @@ class UserController extends Controller
                 ->leftjoin('civil_statuses', 'personal_infos.civilStatusId', '=', 'civil_statuses.id')
                 ->leftjoin('contact_infos', 'users.id', '=', 'contact_infos.userId')
                 ->leftjoin('location_infos', 'users.id', '=', 'location_infos.userId')
-                ->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
-                ->leftjoin('work_places AS educationDivisions', 'offices.workPlaceId', '=', 'educationDivisions.id')
+                //->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
+                ->leftjoin('work_places AS educationDivisions', 'location_infos.educationDivisionId', '=', 'educationDivisions.id')
                 ->leftjoin('gn_divisions', 'location_infos.gnDivisionId', '=', 'gn_divisions.id')
                 ->leftjoin('ds_divisions', 'gn_divisions.dsId', '=', 'ds_divisions.id')
                 ->leftjoin('districts', 'ds_divisions.districtId', '=', 'districts.id')
@@ -1295,8 +2137,8 @@ class UserController extends Controller
                 ->leftjoin('civil_statuses', 'personal_infos.civilStatusId', '=', 'civil_statuses.id')
                 ->leftjoin('contact_infos', 'users.id', '=', 'contact_infos.userId')
                 ->leftjoin('location_infos', 'users.id', '=', 'location_infos.userId')
-                ->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
-                ->leftjoin('work_places AS educationDivisions', 'offices.workPlaceId', '=', 'educationDivisions.id')
+                //->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
+                ->leftjoin('work_places AS educationDivisions', 'location_infos.educationDivisionId', '=', 'educationDivisions.id')
                 ->leftjoin('gn_divisions', 'location_infos.gnDivisionId', '=', 'gn_divisions.id')
                 ->leftjoin('ds_divisions', 'gn_divisions.dsId', '=', 'ds_divisions.id')
                 ->leftjoin('districts', 'ds_divisions.districtId', '=', 'districts.id')
@@ -1658,5 +2500,159 @@ class UserController extends Controller
             'SLEAS Full Report' => 'sleas.fullreportcurrent',
         ];
         return view('sleas/fullreport',compact('option'));
+    }
+
+
+    public function teacherprofileedit(Request $request)
+    {
+        if($request->has('id') && $request->has('category')){
+            try{
+
+                $option = [
+                    'Dashboard' => 'dashboard',
+                    'Teacher Dashboard' => 'teacher.dashboard',
+                    'Teacher Search' => 'teacher.search',
+                    'Teacher Profile' => route('teacher.profile', ['id' => $request->id]),
+                    'Teacher Profile Edit' => htmlspecialchars_decode(route('teacher.profileedit',['id' => $request->id,'category' => $request->category])),
+                ];
+
+                $decryptedId = Crypt::decryptString($request->id);
+                $category = $request->category;
+
+                $teacher = User::find($decryptedId);
+
+                $races = collect([]);
+                $religions = collect([]);
+                $civilStatuses = collect([]);
+                if($category == 'personal')
+                {
+                    $races = Race::where('active', 1)->get();
+                    $religions = Religion::where('active', 1)->get();
+                    $civilStatuses = CivilStatus::where('active', 1)->get();
+                }
+
+
+                $services = collect([]);
+                $current_services = collect([]);
+                if($category == 'service')
+                {
+                    $services = Service::where('active', 1)->get();
+                    $current_services = DB::table('user_in_services')
+                        ->join('services', 'user_in_services.serviceId', '=', 'services.id')
+                        ->where('user_in_services.id', $teacher->id)
+                        ->select('user_in_services.id AS id', 'services.name AS name') // adjust fields as needed
+                        ->get();
+
+                    //dd($user_services);
+                }
+
+                $appointment_lists = collect([]);
+                if($category == 'appointment')
+                {
+                    $appointment_lists = DB::table('user_in_services')
+                    ->join('services', 'user_in_services.serviceId', '=', 'services.id')
+                    ->join('user_service_appointments', 'user_service_appointments.userServiceId', '=', 'user_in_services.id')
+                    ->join('work_places', 'work_places.id', '=', 'user_service_appointments.workPlaceId')
+                    ->where('user_in_services.userId', $teacher->id)
+                    ->where('user_in_services.active', 1)
+                    ->where('services.active', 1)
+                    ->where('user_service_appointments.active', 1)
+                    ->where('work_places.active', 1)
+                    ->whereNotNull('user_service_appointments.releasedDate')
+                    ->select(
+                        'user_service_appointments.id as id',
+                        DB::raw("CONCAT(services.name, ' | ', work_places.name, ' | ', user_service_appointments.appointedDate, ' - ', user_service_appointments.releasedDate) as name")
+                    )
+                    ->get();
+
+                }
+
+                $educationQualifications = collect([]);
+                $professionalQualifications = collect([]);
+                if($category == 'qualification')
+                {
+                    $educationQualifications = EducationQualification::where('active', 1)->get();
+                    $professionalQualifications = ProfessionalQualification::where('active', 1)->get();
+                }
+
+                $ranks = collect([]);
+                if($category == 'rank')
+                {
+                    $ranks = Rank::where('active', 1)
+                    ->where('serviceId', 1)
+                    ->get();
+
+                }
+
+                return view('teacher/profile-edit', compact(
+                    'teacher',
+                    'category',
+                    'races',
+                    'religions',
+                    'civilStatuses',
+                    'services',
+                    'current_services',
+                    'appointment_lists',
+                    'educationQualifications',
+                    'professionalQualifications',
+                    'ranks',
+                    'option'
+                ));
+
+
+            }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                // Redirect to the search page or show an error message for invalid ID
+                return redirect()->route('teacher.search')->with('error', 'Invalid teacher ID provided.');
+            }
+
+        }else{
+            return redirect()->route('teacher.search');
+        }
+    }
+
+
+    // public function index()
+    // {
+    //     return response()->json(User::all(), 200);
+    // }
+
+    // public function show($id)
+    // {
+    //     $user = User::find($id);
+    //     return $user ? response()->json($user, 200) : response()->json(['error' => 'User not found'], 404);
+    // }
+
+    public function index()
+    {
+        return UserResource::collection(User::all()); // Returns formatted user list
+    }
+
+    public function show($id)
+    {
+        return new UserResource(User::findOrFail($id)); // Returns single user data
+    }
+
+    public function store(Request $request)
+    {
+        $user = User::create($request->all());
+        return response()->json($user, 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) return response()->json(['error' => 'User not found'], 404);
+
+        $user->update($request->all());
+        return response()->json($user, 200);
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        if (!$user) return response()->json(['error' => 'User not found'], 404);
+
+        $user->delete();
+        return response()->json(['message' => 'User deleted'], 200);
     }
 }

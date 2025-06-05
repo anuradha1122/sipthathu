@@ -30,11 +30,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $userServiceId = DB::table('user_in_services')
+        $userService = DB::table('user_in_services')
         ->where('userId', Auth::id())
         ->where('current', 1)
         ->where('active', 1)
-        ->value('id');
+        ->select('id', 'serviceId')
+        ->first();
+
+        $userServiceId = $userService->id;
+        $serviceId = $userService->serviceId;
+
 
         $userServiceAppointment = DB::table('user_service_appointments')
         ->where('userServiceId', $userServiceId)
@@ -55,20 +60,20 @@ class AuthenticatedSessionController extends Controller
         $workPlaceCensusNo = $workPlace->censusNo ?? null;
         $workPlaceCategoryId = $workPlace->categoryId ?? null;
 
-        $userServiceAppointmentPositionId = DB::table('user_service_appointment_positions')
+        $positionId = DB::table('user_service_appointment_positions')
         ->where('userServiceAppointmentId', $userServiceAppointmentId)
         ->where('current', 1)
         ->where('active', 1)
-        ->value('id');
+        ->value('positionId');
 
-        session(['serviceId' => $userServiceId]);
+        session(['serviceId' => $serviceId]);
         session(['appointmentId' => $userServiceAppointmentId]);
         session(['workPlaceId' => $workPlaceId]);
         session(['workPlaceName' => $workPlaceName]);
         session(['workPlaceCensusNo' => $workPlaceCensusNo]);
         session(['workPlaceCategoryId' => $workPlaceCategoryId]);
         //session(['attachmentIds' => $userServiceAppointmentIds]);
-        session(['positionId' => $userServiceAppointmentPositionId]);
+        session(['positionId' => $positionId]);
 
         if($workPlaceCategoryId ==1){
             $school = DB::table('schools')
@@ -97,6 +102,7 @@ class AuthenticatedSessionController extends Controller
             session(['higherDivId' => $higherDivId]);
             session(['higherZoneId' => $higherZoneId]);
             session(['higherProviId' => $higherProviId]);
+
 
         }
         if($workPlaceCategoryId ==2){
@@ -135,7 +141,7 @@ class AuthenticatedSessionController extends Controller
                 session(['officeId' => $officeId]);
                 session(['officeTypeId' => $officeType]);
             }
-        
+
         }
         if($workPlaceCategoryId ==3){
             $ministry = DB::table('ministries')
@@ -160,11 +166,12 @@ class AuthenticatedSessionController extends Controller
         // ->where('active', 1)
         // ->pluck('id');
 
-        
 
-        
+        // Get all session data
 
-        
+
+
+
         //dd(Auth::user());
         return redirect()->intended(RouteServiceProvider::HOME);
     }

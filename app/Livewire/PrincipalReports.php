@@ -188,7 +188,8 @@ class PrincipalReports extends Component
         })
         ->leftJoin('user_service_appointments', function ($join) {
             $join->on('user_service_appointments.userServiceId', '=', 'user_in_services.id')
-                 ->where('user_service_appointments.active', 1);
+                 ->where('user_service_appointments.active', 1)
+                 ->where('user_service_appointments.current', 1);
         })
         ->leftJoin('work_places', function ($join) {
             $join->on('user_service_appointments.workPlaceId', '=', 'work_places.id')

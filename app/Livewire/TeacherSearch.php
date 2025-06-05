@@ -30,7 +30,7 @@ class TeacherSearch extends Component
                         ->orWhere('users.nameWithInitials', 'LIKE', '%' . $this->search . '%');
                 });
             })
-            ->where('user_service_appointments.appointmentType', 1)
+            ->where('user_service_appointments.current', 1)
             ->where('user_in_services.serviceId', 1)
             ->select('users.*', 'personal_infos.profilePicture')
             ->paginate(10);

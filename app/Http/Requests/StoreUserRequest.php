@@ -29,7 +29,7 @@ class StoreUserRequest extends FormRequest
             'mobile' => ['required', 'string', 'max:10', 'unique:contact_infos,mobile1','unique:contact_infos,mobile2', 'regex:/^[0-9]{10,15}$/'],
 
             //'school' => ['required', 'not_in:0'],
-            'nic' => ['required', 'unique:users,nic', 'regex:/^([0-9]{9}[Vv]|[0-9]{12})$/'],
+            'nic' => ['required', 'unique:users,nic', 'regex:/^([0-9]{9}[VvXx]|[0-9]{12})$/'],
             'birthDay' => ['required', 'date', 'before:today'],
             'serviceDate' => ['required', 'date', 'after_or_equal:birthDay'],
         ];
