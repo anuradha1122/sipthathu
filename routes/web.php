@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/myprofile', [UserController::class, 'myprofile'])->name('profile.myprofile');
     Route::get('/myprofileedit', [UserController::class, 'myprofileedit'])->name('profile.myprofileedit');
+    Route::get('/myappointment', [UserController::class, 'myappointment'])->name('profile.myappointment');
 
 Route::get('/teacher/dashboard', [UserController::class, 'teacherindex'])->name('teacher.dashboard');
 Route::get('/teacher/register', [UserController::class, 'teachercreate'])->name('teacher.register');

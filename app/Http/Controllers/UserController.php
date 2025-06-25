@@ -596,6 +596,57 @@ class UserController extends Controller
                         'My Profile' => route('profile.myprofile'),
                     ];
 
+                    $user = User::leftjoin('personal_infos', 'users.id', '=', 'personal_infos.userId')
+                    ->leftjoin('races', 'personal_infos.raceId', '=', 'races.id')
+                    ->leftjoin('religions', 'personal_infos.religionId', '=', 'religions.id')
+                    ->leftjoin('civil_statuses', 'personal_infos.civilStatusId', '=', 'civil_statuses.id')
+                    ->leftjoin('contact_infos', 'users.id', '=', 'contact_infos.userId')
+                    ->leftjoin('location_infos', 'users.id', '=', 'location_infos.userId')
+                    //->leftjoin('offices', 'location_infos.educationDivisionId', '=', 'offices.id')
+                    ->leftjoin('work_places AS educationDivisions', 'location_infos.educationDivisionId', '=', 'educationDivisions.id')
+                    ->leftjoin('gn_divisions', 'location_infos.gnDivisionId', '=', 'gn_divisions.id')
+                    ->leftjoin('ds_divisions', 'gn_divisions.dsId', '=', 'ds_divisions.id')
+                    ->leftjoin('districts', 'ds_divisions.districtId', '=', 'districts.id')
+                    ->leftjoin('provinces', 'districts.provinceId', '=', 'provinces.id')
+                    ->where('users.id', Auth::user()->id)
+                    ->select(
+                        'users.id AS userId','users.name AS name','users.nic','users.email','users.nameWithInitials',
+                        'personal_infos.birthDay','personal_infos.profilePicture',
+                        DB::raw("CASE
+                            WHEN personal_infos.genderId = 1 THEN 'Male'
+                            WHEN personal_infos.genderId = 2 THEN 'Female'
+                            ELSE 'Unknown'
+                        END AS gender"),
+                        'races.name AS race',
+                        'religions.name AS religion',
+                        'civil_statuses.name AS civilStatus',
+                        'contact_infos.*',
+                        'educationDivisions.name AS educationDivision',
+                        'gn_divisions.name AS gnDivision',
+                        'ds_divisions.name AS dsDivision',
+                        'districts.name AS district',
+                        'provinces.name AS province',
+                    )
+                    ->first();
+
+                    $combinedData = UserInService::join('services', 'user_in_services.serviceId', '=', 'services.id')
+                    ->leftJoin('user_service_in_ranks', 'user_in_services.id', '=', 'user_service_in_ranks.userServiceId')
+                    ->leftJoin('ranks', 'user_service_in_ranks.rankId', '=', 'ranks.id')
+                    ->where('user_in_services.userId', Auth::user()->id)
+                    ->select(
+                        'user_in_services.id AS userServiceId',
+                        'user_in_services.appointedDate',
+                        'user_in_services.releasedDate',
+                        'user_in_services.current AS currentService',
+                        'services.name AS serviceName',
+                        'user_service_in_ranks.id AS serviceRankId',
+                        'user_service_in_ranks.rankId',
+                        'user_service_in_ranks.rankedDate',
+                        'user_service_in_ranks.current AS currentRank',
+                        'ranks.name AS rank'
+                    )
+                    ->get();
+
                     $services = UserInService::join('services', 'user_in_services.serviceId', '=', 'services.id')
                         ->leftJoin('user_service_in_ranks', 'user_in_services.id', '=', 'user_service_in_ranks.userServiceId')
                         ->leftJoin('ranks', 'user_service_in_ranks.rankId', '=', 'ranks.id')
@@ -613,7 +664,7 @@ class UserController extends Controller
                             'ranks.name AS rank'
                         )
                         ->get();
-
+                    //dd($services);
                     // Partition services into current and previous
                     $partitionedData = $services->partition(function ($item) {
                         return $item->currentService == 1 && is_null($item->releasedDate);
@@ -724,7 +775,7 @@ class UserController extends Controller
                             'formattedAppointment' => "{$appointment->workPlaceName} from {$appointment->appointedDate} to {$appointment->releasedDate}",
                         ];
                     })->pluck('formattedAppointment', 'id')->toArray();
-
+                    //dd($previousAppointments);
                     $currentAttachAppointments = $appointmentsPartitioned->get('currentAttachAppointments', collect())
                     ->map(function ($appointment) {
                         return [
@@ -812,34 +863,10 @@ class UserController extends Controller
                     })->values();
 
 
-                    $educationQualifications = EducationQualification::join('education_qualification_infos', 'education_qualification_infos.educationQualificationId', '=', 'education_qualifications.id')
-                    ->where('education_qualification_infos.userId', Auth::user()->id)
-                    ->where('education_qualification_infos.active', 1)
-                    ->where('education_qualifications.active', 1)
-                    ->selectRaw("GROUP_CONCAT(CONCAT(education_qualifications.name, ' Effective from ', education_qualification_infos.effectiveDate) SEPARATOR '\n') as formattedOutput")
-                    ->pluck('formattedOutput')
-                    ->first();
-
-
-                    $professionalQualifications = professionalQualification::join('professional_qualification_infos', 'professional_qualification_infos.professionalQualificationId', '=', 'professional_qualifications.id')
-                    ->where('professional_qualification_infos.userId', Auth::user()->id)
-                    ->where('professional_qualification_infos.active', 1)
-                    ->where('professional_qualifications.active', 1)
-                    ->selectRaw("GROUP_CONCAT(CONCAT(professional_qualifications.name, ' Effective from ', professional_qualification_infos.effectiveDate) SEPARATOR '\n') as formattedOutput")
-                    ->pluck('formattedOutput')
-                    ->first();
-
-                    $family = FamilyInfo::join('family_member_types', 'family_infos.memberType', '=', 'family_member_types.id')
-                    ->where('family_infos.userId', Auth::user()->id)
-                    ->where('family_infos.active', 1)
-                    ->selectRaw("GROUP_CONCAT(CONCAT(family_infos.name, ' ( ', family_infos.nic, ' ', family_member_types.name, ' ', family_infos.profession, ' )') SEPARATOR '\n') as formattedOutput")
-                    ->pluck('formattedOutput')
-                    ->first();
-
 
 
                     //dd($family);
-                    return view('profile/myprofile', compact(
+                    return view('profile/myappointment', compact(
                         'user',
                         'currentServiceArray',
                         'previousServicesArray',
@@ -853,9 +880,6 @@ class UserController extends Controller
                         'previousPositions',
                         'currentAttachPositions',
                         'previousAttachPositions',
-                        'educationQualifications',
-                        'professionalQualifications',
-                        'family',
                         'option'
                     ));
 
@@ -874,34 +898,36 @@ class UserController extends Controller
     public function teacherindex()
     {
         $teacherQuery = DB::table('users')
-            ->join('personal_infos', function ($join) {
-                $join->on('personal_infos.userId', '=', 'users.id')
-                    ->where('personal_infos.active', 1); // Ensure personal_infos is active
-            })
-            ->join('user_in_services', function ($join) {
-                $join->on('user_in_services.userId', '=', 'users.id')
-                    ->where('user_in_services.active', 1) // Ensure user_in_services is active
-                    ->where('user_in_services.current', 1) // Ensure user_in_services is current
-                    ->where('user_in_services.serviceId', 1);
-            })
-            ->join('user_service_appointments', function ($join) {
-                $join->on('user_service_appointments.userServiceId', '=', 'user_in_services.id')
-                    ->where('user_service_appointments.active', 1) // Ensure user_service_appointments is active
-                    ->where('user_service_appointments.current', 1); // Ensure user_service_appointments is current
-            })
-            ->join('work_places', function ($join) {
-                $join->on('user_service_appointments.workPlaceId', '=', 'work_places.id')
-                    ->where('work_places.active', 1); // Ensure work_places is active
-            });
+        ->join('personal_infos', function ($join) {
+            $join->on('personal_infos.userId', '=', 'users.id')
+                ->where('personal_infos.active', 1); // Ensure personal_infos is active
+        })
+        ->join('user_in_services', function ($join) {
+            $join->on('user_in_services.userId', '=', 'users.id')
+                ->where('user_in_services.active', 1) // Ensure user_in_services is active
+                ->where('user_in_services.current', 1) // Ensure user_in_services is current
+                ->where('user_in_services.serviceId', 1);
+        })
+        ->join('user_service_appointments', function ($join) {
+            $join->on('user_service_appointments.userServiceId', '=', 'user_in_services.id')
+                ->where('user_service_appointments.active', 1) // Ensure user_service_appointments is active
+                ->where('user_service_appointments.current', 1); // Ensure user_service_appointments is current
+        })
+        ->join('work_places', function ($join) {
+            $join->on('user_service_appointments.workPlaceId', '=', 'work_places.id')
+                ->where('work_places.active', 1); // Ensure work_places is active
+        });
 
         if (session('schoolId')) {
             $teacherQuery->where('work_places.id', session('workPlaceId'));
-        } elseif (session('officeId') && session('officeTypeId') == 3) {
+        }
+        elseif (session('officeId') && session('officeTypeId') == 3) {
             $teacherQuery->join('schools', function ($join) {
                 $join->on('work_places.id', '=', 'schools.workPlaceId')
                     ->where('schools.active', 1); // Ensure schools is active
             })->where('schools.officeId', session('officeId'));
-        } elseif (session('officeId') && session('officeTypeId') == 2) {
+        }
+        elseif (session('officeId') && session('officeTypeId') == 2) {
             $teacherQuery->join('schools', function ($join) {
                 $join->on('work_places.id', '=', 'schools.workPlaceId')
                     ->where('schools.active', 1); // Ensure schools is active
@@ -911,7 +937,8 @@ class UserController extends Controller
                     ->where('offices.active', 1); // Ensure offices is active
             })
             ->where('offices.higherOfficeId', session('officeId'));
-        } elseif (session('officeId') && session('officeTypeId') == 1) {
+        }
+        elseif (session('officeId') && session('officeTypeId') == 1) {
             $teacherQuery->join('schools', function ($join) {
                 $join->on('work_places.id', '=', 'schools.workPlaceId')
                     ->where('schools.active', 1); // Ensure schools is active
