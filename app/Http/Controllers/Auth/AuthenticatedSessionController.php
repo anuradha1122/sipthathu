@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -26,8 +27,23 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        //$request->authenticate();
 
+        try {
+            $request->authenticate();
+        } catch (ValidationException $e) {
+            $errors = $e->errors();
+
+            // 🔁 This is your custom redirect logic
+            if (isset($errors['redirect'])) {
+                return redirect($errors['redirect'][0]);
+            }
+
+            // rethrow if it's a regular validation error
+            throw $e;
+        }
+
+        // Proceed normally
         $request->session()->regenerate();
 
         $userService = DB::table('user_in_services')
@@ -66,6 +82,7 @@ class AuthenticatedSessionController extends Controller
         ->where('active', 1)
         ->value('positionId');
 
+        session(['userServiceId' => $userServiceId]);
         session(['serviceId' => $serviceId]);
         session(['appointmentId' => $userServiceAppointmentId]);
         session(['workPlaceId' => $workPlaceId]);
@@ -102,6 +119,7 @@ class AuthenticatedSessionController extends Controller
             session(['higherDivId' => $higherDivId]);
             session(['higherZoneId' => $higherZoneId]);
             session(['higherProviId' => $higherProviId]);
+            //dd(session('higherZoneId'));
 
 
         }
@@ -158,7 +176,7 @@ class AuthenticatedSessionController extends Controller
             session(['ministryId' => $ministryId]);
             session(['relateOfficeId' => $relateOfficeId]);
         }
-
+        //dd(session('higherZoneId'));
         // $userServiceAppointmentIds = DB::table('user_service_appointments')
         // ->where('userServiceId', $userServiceId)
         // ->where('appointmentType', 2)
@@ -170,7 +188,7 @@ class AuthenticatedSessionController extends Controller
         // Get all session data
 
 
-
+        //dd(session()->all());
 
         //dd(Auth::user());
         return redirect()->intended(RouteServiceProvider::HOME);

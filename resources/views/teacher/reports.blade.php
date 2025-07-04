@@ -17,7 +17,7 @@
                         <tr>
                             <x-table-icon-text-detail icon="M3.75 9L12 3.75 20.25 9M4.5 10.5h15M6 20.25h12M9 20.25V14.25m6 6V14.25" text="Teacher Full Report" />
                             <x-table-status-detail text="Detailed" textColor="text-green-800" bgColor="bg-green-100" />
-                            <x-table-action link="teacher.fullreportcurrent" />
+                            <x-table-action action="1" link="teacher.fullreportcurrent" />
                         </tr>
                     </tbody>
                 </table>

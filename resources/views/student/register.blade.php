@@ -10,27 +10,27 @@
                     <div class="grid grid-cols-1 gap-x-3 gap-y-3 sm:grid-cols-6">
                         <h2 class="sm:col-span-6">Personal Detail</h2>
                         <hr class="sm:col-span-6">
-                        <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" />
-                        <x-form-text-input-section size="sm:col-span-2" name="addressLine1" id="addressLine1" label="Address Line 1" />
-                        <x-form-text-input-section size="sm:col-span-2" name="addressLine2" id="addressLine2" label="Address Line 2" />
-                        <x-form-text-input-section size="sm:col-span-2" name="addressLine3" id="addressLine3" label="Address Line 3" />
+                        <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" value="{{ old('name') }}" />
+                        <x-form-text-input-section size="sm:col-span-2" name="addressLine1" id="addressLine1" label="Address Line 1" value="{{ old('addressLine1') }}" />
+                        <x-form-text-input-section size="sm:col-span-2" name="addressLine2" id="addressLine2" label="Address Line 2" value="{{ old('addressLine2') }}" />
+                        <x-form-text-input-section size="sm:col-span-2" name="addressLine3" id="addressLine3" label="Address Line 3" value="{{ old('addressLine3') }}" />
                         <span class="sm:col-span-2">@livewire('formStudentNic')</span>
                         <span class="sm:col-span-2">@livewire('formStudentEmail')</span>
-                        <x-form-text-input-section size="sm:col-span-2" name="mobile" id="mobile" label="Mobile (optional)" />
+                        <x-form-text-input-section size="sm:col-span-2" name="mobile" id="mobile" label="Mobile (optional)" value="{{ old('mobile') }}" />
                         <x-form-list-input-section size="sm:col-span-2" name="gender" id="gender" :options="$genders" label="Gender" />
                         <x-form-list-input-section size="sm:col-span-2" name="race" id="race" :options="$races" label="Race" />
                         <x-form-list-input-section size="sm:col-span-2" name="religion" id="religion" :options="$religions" label="Religion" />
                         <h2 class="sm:col-span-6">School Detail</h2>
                         <hr class="sm:col-span-6">
                         <x-form-list-input-section size="sm:col-span-3" name="class" id="class" :options="$classes" label="Class" />
-                        <x-form-date-input-section size="sm:col-span-3" name="registerDate" id="registerDate" label="Registered Date" />
+                        <x-form-date-input-section size="sm:col-span-3" name="registerDate" id="registerDate" label="Registered Date" value="{{ old('registerDate') }}" />
 
                         <h2 class="sm:col-span-6">Birth Detail</h2>
                         <hr class="sm:col-span-6">
 
                         {{-- <x-form-text-input-section size="sm:col-span-2" name="nic" id="nic" label="NIC" /> --}}
-                        <x-form-number-input-section size="sm:col-span-3" name="birthCertificate" id="birthCertificate" label="Birth Certificate No" value="" />
-                        <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" />
+                        <x-form-number-input-section size="sm:col-span-3" name="birthCertificate" id="birthCertificate" label="Birth Certificate No" value="{{ old('birthCertificate') }}" />
+                        <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" value="{{ old('birthDay') }}" />
                         <span class="sm:col-span-6">@livewire('StudentBirthLocation')</span>
 
                         <h2 class="sm:col-span-6">Health Detail</h2>
@@ -40,11 +40,11 @@
 
                         <h2 class="sm:col-span-6">Guardian Detail</h2>
                         <hr class="sm:col-span-6">
-                        <x-form-text-input-section size="sm:col-span-6" name="guardianName" id="guardianName" label="Guardian Full Name" />
-                        <x-form-text-input-section size="sm:col-span-3" name="guardianNic" id="guardianNic" label="Guardian NIC" />
+                        <x-form-text-input-section size="sm:col-span-6" name="guardianName" id="guardianName" label="Guardian Full Name" value="{{ old('guardianName') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="guardianNic" id="guardianNic" label="Guardian NIC" value="{{ old('guardianNic') }}" />
                         <x-form-list-input-section size="sm:col-span-3" name="guardianRelationship" id="guardianRelationship" :options="$guardianRelationships" label="Guardian Relationship" />
-                        <x-form-text-input-section size="sm:col-span-3" name="Guardian Email" id="guardianEmail" label="guardianEmail (optional)" />
-                        <x-form-text-input-section size="sm:col-span-3" name="guardianMobile" id="guardianMobile" label="Guardian Mobile" />
+                        <x-form-text-input-section size="sm:col-span-3" name="Guardian Email" id="guardianEmail" label="guardianEmail (optional)" value="{{ old('guardianEmail') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="guardianMobile" id="guardianMobile" label="Guardian Mobile" value="{{ old('guardianMobile') }}" />
 
                         <h2 class="sm:col-span-6">Profile Picture</h2>
                         <hr class="sm:col-span-6">

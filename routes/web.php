@@ -5,7 +5,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TransferController;
+use App\Http\Controllers\TeacherTransferController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PDFController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -29,6 +32,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/changepassword', [ProfileController::class, 'passwordreset'])->name('password.change');
+Route::post('/changepassword', [ProfileController::class, 'updatePassword'])->name('password.change.submit');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -49,6 +55,11 @@ Route::get('/teacher/reports', [UserController::class, 'teacherreports'])->name(
 Route::get('/teacher/fullreportcurrent', [UserController::class, 'teacherfullreportcurrent'])->name('teacher.fullreportcurrent');
 Route::get('/teacher/profile', [UserController::class, 'teacherprofile'])->name('teacher.profile');
 Route::get('/teacher/profileedit', [UserController::class, 'teacherprofileedit'])->name('teacher.profileedit');
+Route::get('/teacher/transfer', [TeacherTransferController::class, 'teacherindex'])->name('teacher.transfer');
+Route::post('/teacher/transfercompleate', [TeacherTransferController::class, 'teacherstore'])->name('teacher.transferstore');
+Route::get('/teacher-transfers-pdf', [TeacherTransferController::class, 'teacherPersonalPdf']);
+
+
 
 Route::get('/principal/dashboard', [UserController::class, 'principalindex'])->name('principal.dashboard');
 Route::get('/principal/register', [UserController::class, 'principalcreate'])->name('principal.register');
@@ -57,6 +68,7 @@ Route::get('/principal/search', [UserController::class, 'principalsearch'])->nam
 Route::get('/principal/reports', [UserController::class, 'principalreports'])->name('principal.reports');
 Route::get('/principal/fullreportcurrent', [UserController::class, 'principalfullreportcurrent'])->name('principal.fullreportcurrent');
 Route::get('/principal/profile', [UserController::class, 'principalprofile'])->name('principal.profile');
+Route::get('/principal/transfer', [TransferController::class, 'principalindex'])->name('principal.transfer');
 
 Route::get('/sleas/dashboard', [UserController::class, 'sleasindex'])->name('sleas.dashboard');
 Route::get('/sleas/register', [UserController::class, 'sleascreate'])->name('sleas.register');

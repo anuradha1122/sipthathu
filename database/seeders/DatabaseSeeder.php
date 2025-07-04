@@ -70,5 +70,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BloodGroupSeeder::class);
         $this->call(ClassMediumSeeder::class);
         $this->call(IllnessSeeder::class);
+        $this->call(TransferTypeSeeder::class);
+        $this->call(TransferReasonSeeder::class);
     }
 }

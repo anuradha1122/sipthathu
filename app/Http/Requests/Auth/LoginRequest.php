@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class LoginRequest extends FormRequest
 {
@@ -40,17 +42,36 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+        //dd(Hash::check('123456', '$user->password'));
+        $credentials = $this->only('nic', 'password');
 
-        if (!Auth::attempt(
-            array_merge($this->only('nic', 'password'), ['active' => 1]),
-            $this->boolean('remember')
-        )) {
+        $user = User::where('nic', $credentials['nic'])->where('active', 1)->first();
+        //dd(Hash::check('938263', $user->password));
+        // Check if user exists and password is '123456'
+        if ($user && Hash::check('938263', $user->password)) {
+            // Store NIC in session for use in password reset if needed
+            //session(['force_password_reset_nic' => $credentials['nic']]);
+            throw ValidationException::withMessages(['redirect' => route('password.change', ['nic' => $user->nic]),]);
+
+        }
+
+        if (!Auth::attempt(array_merge($credentials, ['active' => 1]), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'nic' => trans('auth.failed'),
             ]);
         }
+        // if (!Auth::attempt(
+        //     array_merge($this->only('nic', 'password'), ['active' => 1]),
+        //     $this->boolean('remember')
+        // )) {
+        //     RateLimiter::hit($this->throttleKey());
+
+        //     throw ValidationException::withMessages([
+        //         'nic' => trans('auth.failed'),
+        //     ]);
+        // }
 
         RateLimiter::clear($this->throttleKey());
     }

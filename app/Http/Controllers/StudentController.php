@@ -291,8 +291,10 @@ class StudentController extends Controller
                 ->where('school_class_students.active', 1)
                 ->where('student_schools.current', 1) // Ensuring the current school is selected
                 ->first();
-
-                if (!$student) {
+                if ($student) {
+                    $student->cryptedId = $request->id;
+                }
+                else {
                     // Redirect or show an error if no student is found
                     return redirect()->route('student.search')->with('error', 'Student not found.');
                 }
