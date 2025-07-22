@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use Livewire\WithPagination;
+use Illuminate\Pagination\Paginator;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -20,6 +22,8 @@ use App\Models\SchoolLanguage;
 
 class TeacherReports extends Component
 {
+    use WithPagination;
+
     public $province;
     public $district;
     public $zone;
@@ -191,7 +195,8 @@ class TeacherReports extends Component
         ->leftJoin('user_service_appointments', function ($join) {
             $join->on('user_service_appointments.userServiceId', '=', 'user_in_services.id')
                  ->where('user_service_appointments.active', 1)
-                 ->where('user_service_appointments.current', 1);
+                 ->where('user_service_appointments.current', 1)
+                 ->where('user_service_appointments.releasedDate', NULL);
         })
         ->leftJoin('work_places', function ($join) {
             $join->on('user_service_appointments.workPlaceId', '=', 'work_places.id')

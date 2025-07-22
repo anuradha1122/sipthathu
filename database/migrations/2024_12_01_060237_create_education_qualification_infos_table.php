@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('userId')->unsigned()->required();
             $table->mediumInteger('educationQualificationId')->unsigned()->nullable();
             $table->date('effectiveDate')->required();
+            $table->string('description', 100)->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

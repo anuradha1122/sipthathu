@@ -155,7 +155,10 @@ class StudentController extends Controller
             'nic' => $request->nic,
             'email' => $request->email,
             'mobile' => $request->mobile,
+            'identificationNo' => $request->identificationNo,
+            'registerNo' => $request->registerNo,
         ]);
+
 
         // Generate studentNo
         $studentNo = $year . str_pad($dayCount, 3, '0', STR_PAD_LEFT) . str_pad($student->id, 7, '0', STR_PAD_LEFT);
@@ -171,12 +174,29 @@ class StudentController extends Controller
             'addressLine2' => $request->addressLine2,
             'addressLine3' => $request->addressLine3,
             'mobile' => $request->mobile,
+
+            // Guardian Info
             'guardianName' => $request->guardianName,
             'guardianNic' => $request->guardianNic,
             'guardianRelationshipId' => $request->guardianRelationship,
             'guardianEmail' => $request->guardianEmail,
             'guardianMobile' => $request->guardianMobile,
+
+            // Mother Info
+            'motherName' => $request->motherName,
+            'motherNic' => $request->motherNic,
+            'motherMobile' => $request->motherMobile,
+            'motherEmail' => $request->motherEmail,
+
+            // Father Info
+            'fatherName' => $request->fatherName,
+            'fatherNic' => $request->fatherNic,
+            'fatherMobile' => $request->fatherMobile,
+            'fatherEmail' => $request->fatherEmail,
+
+            'active' => 1,
         ]);
+
 
         // Insert into 'student_location_infos' table
 

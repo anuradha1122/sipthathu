@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreteacherTransferRequest;
 use App\Http\Requests\UpdateteacherTransferRequest;
 use App\Models\teacherTransfer;
+use App\Models\UserInService;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class TeacherTransferController extends Controller
 {
@@ -17,7 +19,20 @@ class TeacherTransferController extends Controller
      */
     public function index()
     {
-        //
+        //dd(session('appointmentId'));
+        $userInService = UserInService::where('id', session('userServiceId'))->first();
+
+
+        // Assuming $userServiceAppointment->appointedDate is a valid date (e.g., '2020-01-15')
+        $appointedDate = Carbon::parse($userInService->appointedDate);
+        $comparisonDate = Carbon::parse('2025-07-01');
+        $years = $appointedDate->diffInYears($comparisonDate);
+
+
+        $option = [
+            'Dashboard' => 'teacher.transferdashboard',
+        ];
+        return view('teacher/transfer-dashboard',compact('option','years'));
     }
 
     public function teacherindex()
@@ -40,6 +55,7 @@ class TeacherTransferController extends Controller
             ->join('schools', 'work_places.id', '=', 'schools.workPlaceId')
             ->join('offices', 'schools.officeId', '=', 'offices.id')
             ->where('offices.higherOfficeId', session('higherZoneId'))
+            ->where('schools.authorityId', 2)
             ->select('work_places.name', 'schools.id') // or choose specific columns
             ->get();
 
@@ -51,6 +67,7 @@ class TeacherTransferController extends Controller
 
 
         $option = [
+            'Dashboard' => 'teacher.transferdashboard',
             'Transfer Form' => 'teacher.transfer',
         ];
         return view('teacher/transferform',compact('option','binaryList','teachingGradeList','zoneSchools'));

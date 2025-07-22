@@ -15,6 +15,14 @@ class StudentContactInfo extends Model
         'addressLine2',
         'addressLine3',
         'mobile',
+        'motherName',
+        'motherNic',
+        'motherMobile',
+        'motherEmail',
+        'fatherName',
+        'fatherNic',
+        'fatherMobile',
+        'fatherEmail',
         'guardianName',
         'guardianNic',
         'guardianRelationshipId',
@@ -22,4 +30,5 @@ class StudentContactInfo extends Model
         'guardianEmail',
         'active',
     ];
+
 }

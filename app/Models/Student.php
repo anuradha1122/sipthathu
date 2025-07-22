@@ -13,6 +13,8 @@ class Student extends Model
         'name',
         'nameWithInitials',
         'studentNo',
+        'identificationNo',
+        'registerNo',
         'nic',
         'email',
         'active',

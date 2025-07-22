@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('appointedDate')->required();
             $table->date('releasedDate')->nullable();
             $table->tinyInteger('appointmentType')->default(1)->required();
+            $table->integer('reason')->nullable();
             $table->tinyInteger('current')->default(1)->required();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();

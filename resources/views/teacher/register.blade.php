@@ -22,7 +22,7 @@
                         <x-form-list-input-section size="sm:col-span-3" name="subject" id="subject" :options="$subjects" label="Appointment Subject" />
                         <span class="sm:col-span-3">@livewire('formUserSchool')</span>
                         <x-form-list-input-section size="sm:col-span-3" name="medium" id="medium" :options="$appointedMediums" label="Appointment Medium" />
-                        <x-form-list-input-section size="sm:col-span-3" name="category" id="category" :options="$appointmentCategories" label="Appointment category" />
+                        <x-form-list-input-section size="sm:col-span-3" name="acategory" id="acategory" :options="$appointmentCategories" label="Appointment category" />
                         <x-form-date-input-section size="sm:col-span-3" name="birthDay" id="birthDay" label="Birth Day" value="{{ old('birthDay') }}" />
                         <x-form-list-input-section size="sm:col-span-3" name="rank" id="rank" :options="$ranks" label="Service Appointment Rank" />
                         <x-form-date-input-section size="sm:col-span-3" name="serviceDate" id="serviceDate" label="Service Appointed Date" value="{{ old('serviceDate') }}" />

@@ -132,13 +132,15 @@
                     <tr>
                         @if (!empty($results))
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">#</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">NIC</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
+
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name With Initials</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">School</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Zone</th>
+                            {{-- <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Zone</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Race</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Religion</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Civil Status</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Civil Status</th> --}}
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Gender</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Birth Day</th>
                         @endif
@@ -149,13 +151,14 @@
                         @foreach ($results as $index => $result)
                         <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $results->firstItem() + $index }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nic }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->userName }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->workPlaceName }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->zoneName }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->race }}</td>
+                        {{-- <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->race }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->religion }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->civilStatus }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->civilStatus }}</td> --}}
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->gender }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->birthDay }}</td>
                         </tr>

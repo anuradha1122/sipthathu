@@ -31,6 +31,7 @@ class TeacherSearch extends Component
                 });
             })
             ->where('user_service_appointments.current', 1)
+            ->where('user_service_appointments.releasedDate', NULL)
             ->where('user_in_services.serviceId', 1)
             ->select('users.*', 'personal_infos.profilePicture')
             ->paginate(10);

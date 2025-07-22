@@ -22,6 +22,22 @@ class TeacherProfile extends Component
     public $educationQualifications;
     public $professionalQualifications;
     public $family;
+    public $loginAction = 0;
+    public $profileAction = 0;
+
+    public function mount()
+    {
+        //dd(session('positionId'));
+        if (in_array(session('positionId'), [4, 6, 7, 10])) {
+            $this->loginAction = 1;
+        }
+        if (in_array(session('positionId'), [6])) {
+            $this->profileAction = 1;
+        }
+        //dd($this->loginAction);
+
+    }
+
 
     public function render()
     {

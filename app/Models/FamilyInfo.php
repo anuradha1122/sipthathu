@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class FamilyInfo extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'userId',
+        'memberType',
+        'nic',
+        'name',
+        'school',
+        'profession',
+        'active',
+    ];
 }

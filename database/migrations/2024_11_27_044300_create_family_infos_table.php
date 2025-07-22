@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nic', 12)->nullable();
             $table->string('name', 200)->required();
             $table->mediumInteger('school')->unsigned()->nullable();
-            $table->string('profession', 200)->required();
+            $table->string('profession', 200)->nullable();
             $table->tinyInteger('active')->default(1)->required();
             $table->timestamps();
         });

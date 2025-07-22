@@ -72,5 +72,6 @@ class DatabaseSeeder extends Seeder
         $this->call(IllnessSeeder::class);
         $this->call(TransferTypeSeeder::class);
         $this->call(TransferReasonSeeder::class);
+        $this->call(AppointmentTerminationSeeder::class);
     }
 }

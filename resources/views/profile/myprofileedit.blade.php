@@ -6,7 +6,7 @@
                 <x-profile-heading heading="{{ $user->nameWithInitials }}" subHeading="{{ $user->nic }}" image="{{ $user->profilePicture }}" />
 
                 <x-form-success message="{{ session('success') }}" />
-                <form method="POST" action="{{ route('teacher.register') }}" class="mx-auto mt-8 max-w-xl sm:mt-8" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('profile.myprofilestore') }}" class="mx-auto mt-8 max-w-xl sm:mt-8" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-6 gap-x-8 gap-y-6 sm:grid-cols-6">
                         @if ($category == 'name')
@@ -163,9 +163,16 @@
                             <x-form-list-input-section size="sm:col-span-3" name="rank" id="rank" :options="$ranks" label="Rank List" />
                         @endif
 
+                        @if($category == 'login')
+                            <x-form-text-input-section size="sm:col-span-6" name="currentPassword" id="currentPassword" label="Current Password" value="{{ old('currentPassword') }}" />
+                            <x-form-text-input-section size="sm:col-span-3" name="newPassword" id="newPassword" label="New Password" value="{{ old('newPassword') }}" />
+                            <x-form-text-input-section size="sm:col-span-3" name="confirmPassword" id="confirmPassword" label="Confirm Password" value="{{ old('confirmPassword') }}" />
+                        @endif
+                        <input type="hidden" name="category" value="{{ $category }}">
                     </div>
                     <div class="mt-10">
                         <x-form-button-primary size="" text="Submit" modelBinding=""/>
+
                     </div>
                 </form>
             </div>

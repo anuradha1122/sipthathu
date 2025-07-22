@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('studentNo')->nullable()->unique();
+            $table->string('identificationNo', 100)->nullable()->unique();
+            $table->bigInteger('registerNo')->nullable();
+            $table->string('nic')->nullable();
             $table->string('name');
             $table->string('nameWithInitials')->nullable();
-            $table->string('nic')->nullable();
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
 

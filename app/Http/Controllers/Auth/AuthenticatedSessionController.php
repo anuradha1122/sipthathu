@@ -48,7 +48,7 @@ class AuthenticatedSessionController extends Controller
 
         $userService = DB::table('user_in_services')
         ->where('userId', Auth::id())
-        ->where('current', 1)
+        ->where('releasedDate', NULL)
         ->where('active', 1)
         ->select('id', 'serviceId')
         ->first();
@@ -60,7 +60,7 @@ class AuthenticatedSessionController extends Controller
         $userServiceAppointment = DB::table('user_service_appointments')
         ->where('userServiceId', $userServiceId)
         ->where('appointmentType', 1)
-        ->where('current', 1)
+        ->where('releasedDate', NULL)
         ->where('active', 1)
         ->first(['id', 'workPlaceId']);
 

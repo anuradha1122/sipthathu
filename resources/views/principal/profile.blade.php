@@ -5,6 +5,7 @@
             <div class="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
                 <x-profile-heading heading="{{ $principal->nameWithInitials }}" subHeading="{{ $principal->nic }}" image="{{ $principal->profilePicture }}" />
                 <div class="border-t border-gray-200">
+                    {{-- {{ print_r($principal) }} --}}
                     @livewire('principal-profile', [
                         'principal' => $principal,
                         'currentService' => $currentServiceArray,

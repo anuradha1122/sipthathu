@@ -11,6 +11,8 @@
                         <h2 class="sm:col-span-6">Personal Detail</h2>
                         <hr class="sm:col-span-6">
                         <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" value="{{ old('name') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="identificationNo" id="identificationNo" label="Student Identification No" value="{{ old('identificationNo') }}" />
+                        <x-form-number-input-section size="sm:col-span-3" name="registerNo" id="registerNo" label=" Register No(Attendence Marking book)" value="{{ old('registerNo') }}" />
                         <x-form-text-input-section size="sm:col-span-2" name="addressLine1" id="addressLine1" label="Address Line 1" value="{{ old('addressLine1') }}" />
                         <x-form-text-input-section size="sm:col-span-2" name="addressLine2" id="addressLine2" label="Address Line 2" value="{{ old('addressLine2') }}" />
                         <x-form-text-input-section size="sm:col-span-2" name="addressLine3" id="addressLine3" label="Address Line 3" value="{{ old('addressLine3') }}" />
@@ -38,12 +40,20 @@
                         <x-form-list-input-section size="sm:col-span-3" name="illness" id="bloodGroup" :options="$bloodGroups" label="Blood Group (optional)" />
                         <x-form-list-input-section size="sm:col-span-3" name="illness" id="illness" :options="$illnesses" label="Illnesses (optional)" />
 
-                        <h2 class="sm:col-span-6">Guardian Detail</h2>
+                        <h2 class="sm:col-span-6">Parents/Guardian Detail</h2>
                         <hr class="sm:col-span-6">
+                        <x-form-text-input-section size="sm:col-span-6" name="motherName" id="motherName" label="Mother Full Name" value="{{ old('motherName') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="motherNic" id="motherNic" label="Mother NIC" value="{{ old('motherNic') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="motherEmail" id="motherEmail" label="Mother Email (optional)" value="{{ old('motherEmail') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="motherMobile" id="motherMobile" label="Mother Mobile" value="{{ old('motherMobile') }}" />
+                        <x-form-text-input-section size="sm:col-span-6" name="fatherName" id="fatherName" label="Father Full Name" value="{{ old('fatherName') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="fatherNic" id="fatherNic" label="Father NIC" value="{{ old('fatherNic') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="fatherEmail" id="fatherEmail" label="Father Email (optional)" value="{{ old('fatherEmail') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="fatherMobile" id="fatherMobile" label="Father Mobile" value="{{ old('fatherMobile') }}" />
                         <x-form-text-input-section size="sm:col-span-6" name="guardianName" id="guardianName" label="Guardian Full Name" value="{{ old('guardianName') }}" />
                         <x-form-text-input-section size="sm:col-span-3" name="guardianNic" id="guardianNic" label="Guardian NIC" value="{{ old('guardianNic') }}" />
                         <x-form-list-input-section size="sm:col-span-3" name="guardianRelationship" id="guardianRelationship" :options="$guardianRelationships" label="Guardian Relationship" />
-                        <x-form-text-input-section size="sm:col-span-3" name="Guardian Email" id="guardianEmail" label="guardianEmail (optional)" value="{{ old('guardianEmail') }}" />
+                        <x-form-text-input-section size="sm:col-span-3" name="GuardianEmail" id="guardianEmail" label="guardianEmail (optional)" value="{{ old('guardianEmail') }}" />
                         <x-form-text-input-section size="sm:col-span-3" name="guardianMobile" id="guardianMobile" label="Guardian Mobile" value="{{ old('guardianMobile') }}" />
 
                         <h2 class="sm:col-span-6">Profile Picture</h2>

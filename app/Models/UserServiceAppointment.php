@@ -14,6 +14,7 @@ class UserServiceAppointment extends Model
         'workPlaceId',
         'appointedDate',
         'releasedDate',
+        'reason',
         'appointmentType',
         'current',
     ];
