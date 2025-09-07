@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProfessionalQualificationSeeder extends Seeder
 {
@@ -13,7 +14,12 @@ class ProfessionalQualificationSeeder extends Seeder
      */
     public function run(): void
     {
+
+        // Temporarily disable foreign key checks to allow truncation
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('professional_qualifications')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $data = [
             // Foundational Teacher Qualifications
             ['name' => 'National Diploma in Teaching (College of Education)', 'qualificationLevel' => 1, 'qualificationTypeId' => 1],

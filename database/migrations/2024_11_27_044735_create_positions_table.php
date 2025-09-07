@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50)->required();
-            $table->tinyInteger('workPlaceCatagoryId')->unsigned()->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            $table->string('name', 50);
+
+            // Foreign UUID to work_place_categories table
+            $table->foreignId('workPlaceCatagoryId')
+                  ->constrained('work_place_catagories')
+                  ->restrictOnDelete();
+
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

@@ -8,6 +8,9 @@
                 @if (session('workPlaceCategoryId') == 2 && session('officeTypeId') == 2 && session('positionId') == 6)
                     <x-link-icon-button background="bg-green-500" textcolor="text-white" link="principal.register" icon="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" text="Create" />
                 @endif
+                @if (session('workPlaceCategoryId') == 2 && session('positionId') >= 6)
+                    <x-link-icon-button background="bg-green-500" textcolor="text-white" link="principal.transfersummary" icon="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" text="Transfer Summary" />
+                @endif
             </div>
             <x-profile-heading image="" heading="{{ session('workPlaceName') }}" subHeading="Principal Section" />
             <div class="p-1 px-0 overflow-scroll">

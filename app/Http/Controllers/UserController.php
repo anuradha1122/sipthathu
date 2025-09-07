@@ -1341,9 +1341,26 @@ class UserController extends Controller
         return view('nonacademic/register',compact('option', 'ranks'));
     }
 
-    public function teacherstore(StoreUserRequest $request)
+    public function teacherstore(Request $request)
     {
 
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'addressLine1' => ['required', 'string', 'max:100'],
+            'addressLine2' => ['required', 'string', 'max:100'],
+            'addressLine3' => ['required', 'string', 'max:100'],
+            'mobile' => ['required', 'string', 'max:10', 'unique:contact_infos,mobile1','unique:contact_infos,mobile2', 'regex:/^[0-9]{10,15}$/'],
+            'nic' => ['required', 'unique:users,nic', 'regex:/^([0-9]{9}[VvXx]|[0-9]{12})$/'],
+            'birthDay' => ['required', 'date', 'before:today'],
+            'serviceDate' => ['required', 'date', 'after_or_equal:birthDay'],
+            'subject' => ['required', 'exists:subjects,id'],
+            //'subj' => ['required', 'exists:subjects,id'],
+            'medium' => ['required', 'exists:appointment_media,id'],
+            'acategory' => ['required', 'exists:appointment_categories,id'],
+            'ranks' => ['required', 'exists:ranks,id'],
+            'school' => ['required', 'not_in:0'],
+            //'gender' => ['required', 'exists:genders,id'],
+        ]);
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('userphotos', 'public');
             $profileImage = Storage::url($photoPath);
@@ -1367,6 +1384,22 @@ class UserController extends Controller
         // Combine initials and last name
         $nameWithInitials = implode('', $initials) . ' ' . $lastName;
 
+        $nic = $request->nic;
+        $gender = null;
+
+        if (preg_match('/^\d{10}$/', $nic)) {
+            // Old NIC format (10 digits)
+            $day = (int) substr($nic, 2, 3); // 3rd, 4th, 5th digits
+            $gender = $day < 500 ? 1 : 2;
+        } elseif (preg_match('/^\d{12}$/', $nic)) {
+            // New NIC format (12 digits)
+            $day = (int) substr($nic, 4, 3); // 5th, 6th, 7th digits
+            $gender = $day < 500 ? 1 : 2;
+        } else {
+            // Invalid NIC format
+            $gender = null;
+        }
+
 
         $user = User::create([
             'name' => ucwords(strtolower($request->name)),
@@ -1383,7 +1416,7 @@ class UserController extends Controller
 
         $userServiceInRank = UserServiceInRank::create([
             'userServiceId' => $userInService->id,
-            'rankId' => $request->rank,
+            'rankId' => $request->ranks,
             'rankedDate' => $request->serviceDate,
         ]);
 
@@ -1414,7 +1447,7 @@ class UserController extends Controller
         $personalInfo = PersonalInfo::create([
             'userId' => $user->id,
             'profilePicture' => $profileImage,
-            'genderId' => $request->gender,
+            'genderId' => $gender,
             'birthDay' => $request->birthDay,
         ]);
         $personalInfo->save();
@@ -1458,6 +1491,21 @@ class UserController extends Controller
         // Combine initials and last name
         $nameWithInitials = implode('', $initials) . ' ' . $lastName;
 
+        $nic = $request->nic;
+        $gender = null;
+
+        if (preg_match('/^\d{10}$/', $nic)) {
+            // Old NIC format (10 digits)
+            $day = (int) substr($nic, 2, 3); // 3rd, 4th, 5th digits
+            $gender = $day < 500 ? 1 : 2;
+        } elseif (preg_match('/^\d{12}$/', $nic)) {
+            // New NIC format (12 digits)
+            $day = (int) substr($nic, 4, 3); // 5th, 6th, 7th digits
+            $gender = $day < 500 ? 1 : 2;
+        } else {
+            // Invalid NIC format
+            $gender = null;
+        }
 
         $user = User::create([
             'name' => ucwords(strtolower($request->name)),
@@ -1498,7 +1546,7 @@ class UserController extends Controller
         $personalInfo = PersonalInfo::create([
             'userId' => $user->id,
             'profilePicture' => $profileImage,
-            'genderId' => $request->gender,
+            'genderId' => $gender,
             'birthDay' => $request->birthDay,
         ]);
         $personalInfo->save();
@@ -1882,9 +1930,9 @@ class UserController extends Controller
 
                 // Partition appointments into categories based on their attributes
                 $appointmentsPartitioned = $appointments->groupBy(function ($appointment) {
-                if ($appointment->current == 1 && is_null($appointment->releasedDate)) {
+                if (is_null($appointment->releasedDate)) {
                     return $appointment->appointmentType == 1 ? 'currentAppointments' : 'currentAttachAppointments';
-                } elseif ($appointment->current == 0 && !is_null($appointment->releasedDate)) {
+                } elseif (!is_null($appointment->releasedDate)) {
                     return $appointment->appointmentType == 1 ? 'previousAppointments' : 'previousAttachAppointments';
                 }
                 return null; // Ignore other cases
@@ -2218,9 +2266,9 @@ class UserController extends Controller
 
                 // Partition appointments into categories based on their attributes
                 $appointmentsPartitioned = $appointments->groupBy(function ($appointment) {
-                if ($appointment->current == 1 && is_null($appointment->releasedDate)) {
+                if (is_null($appointment->releasedDate)) {
                     return $appointment->appointmentType == 1 ? 'currentAppointments' : 'currentAttachAppointments';
-                } elseif ($appointment->current == 0 && !is_null($appointment->releasedDate)) {
+                } elseif (!is_null($appointment->releasedDate)) {
                     return $appointment->appointmentType == 1 ? 'previousAppointments' : 'previousAttachAppointments';
                 }
                 return null; // Ignore other cases

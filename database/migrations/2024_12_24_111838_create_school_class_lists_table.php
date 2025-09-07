@@ -13,13 +13,34 @@ return new class extends Migration
     {
         Schema::create('school_class_lists', function (Blueprint $table) {
             $table->id();
-            $table->integer('schoolId')->unsigned()->required();
-            $table->integer('classId')->unsigned()->required();
-            $table->integer('teacherId')->unsigned()->nullable();
-            $table->tinyInteger('mediumId')->unsigned()->nullable();
+
+            // Foreign keys
+            $table->foreignId('schoolId')
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('classId')
+                  ->constrained('class_lists')
+                  ->restrictOnDelete();
+
+            // Nullable foreign key to user_service_appointments (teacher)
+            $table->foreignId('teacherId')
+                  ->nullable()
+                  ->constrained('user_service_appointments')
+                  ->nullOnDelete();
+
+            // Optional medium
+            $table->foreignId('mediumId')
+                  ->nullable()
+                  ->constrained('class_media')
+                  ->nullOnDelete();
+
             $table->integer('studentCount')->unsigned()->nullable();
             $table->tinyInteger('year')->unsigned()->nullable();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
     }

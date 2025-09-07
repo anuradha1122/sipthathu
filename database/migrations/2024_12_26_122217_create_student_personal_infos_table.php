@@ -13,19 +13,34 @@ return new class extends Migration
     {
         Schema::create('student_personal_infos', function (Blueprint $table) {
             $table->id();
-            $table->integer('studentId')->unsigned()->required()->unique();
+
+            // One-to-one relationship with students
+            $table->foreignId('studentId')
+                  ->unique()
+                  ->constrained('students')
+                  ->restrictOnDelete();
+
+            // Optional profile picture
             $table->string('profilePicture', 300)->nullable();
-            $table->tinyInteger('raceId')->unsigned()->nullable();
-            $table->tinyInteger('religionId')->unsigned()->nullable();
-            $table->tinyInteger('genderId')->unsigned()->required();
-            $table->tinyInteger('bloodGroupId')->unsigned()->nullable();
-            $table->mediumInteger('illnessId')->nullable();
-            $table->date('birthDay')->required();
-            $table->Integer('birthCertificate')->required();
-            $table->mediumInteger('birthDsDivisionId')->nullable();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign keys for lookup tables
+            $table->foreignId('raceId')->nullable()->constrained('races');
+            $table->foreignId('religionId')->nullable()->constrained('religions');
+            $table->tinyInteger('genderId')->unsigned(); // required
+            $table->foreignId('bloodGroupId')->nullable()->constrained('blood_groups');
+            $table->foreignId('illnessId')->nullable()->constrained('illnesses');
+            $table->foreignId('birthDsDivisionId')->nullable()->constrained('ds_divisions');
+
+            // Birth details
+            $table->date('birthDay');
+            $table->string('birthCertificate', 100)->required(); // use string instead of int for flexibility
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

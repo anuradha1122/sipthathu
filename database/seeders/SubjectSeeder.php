@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SubjectSeeder extends Seeder
 {
@@ -13,7 +14,11 @@ class SubjectSeeder extends Seeder
      */
     public function run(): void
     {
+        
+        // Temporarily disable foreign key checks to allow truncation
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('subjects')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = array(
             array("id"=>"1", "name"=>"Primary", "sectionId"=>"1", "categoryId"=>"1", "weekPeriod"=>"1"),
@@ -121,34 +126,34 @@ class SubjectSeeder extends Seeder
             array("id"=>"103", "name"=>"A/L Russian", "sectionId"=>"3", "categoryId"=>"9", "weekPeriod"=>"1"),
             array("id"=>"104", "name"=>"A/L Malay", "sectionId"=>"3", "categoryId"=>"9", "weekPeriod"=>"1"),
             array("id"=>"105", "name"=>"A/L Hindi", "sectionId"=>"3", "categoryId"=>"9", "weekPeriod"=>"1"),
-            array("id"=>"106", "name"=>"Child Psychology & Care", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"107", "name"=>"Health & Social Care", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"108", "name"=>"Physical Education & Sports", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"109", "name"=>"Performing Arts", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"110", "name"=>"Event Management", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"111", "name"=>"A/L Art & Craft", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"112", "name"=>"Interior Designing", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"113", "name"=>"Fashion Designing", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"114", "name"=>"Graphic Design", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"115", "name"=>"Art & Designing", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"116", "name"=>"Landscaping", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"117", "name"=>"Applied Horticulural Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"118", "name"=>"Livestock Product Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"119", "name"=>"Food Processing Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"120", "name"=>"Aquatic Resource  Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"121", "name"=>"Plantation Product Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"122", "name"=>"Construction  Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"123", "name"=>"Automobile Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"124", "name"=>"Electrical and Electronic  Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"125", "name"=>"Textile & Apparel Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"126", "name"=>"Metal Fabrication Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"127", "name"=>"Aluminum Fabrication Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"128", "name"=>"Computer Hardware & Networking (Web Designing and Software Development)", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"129", "name"=>"Manufacturing", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"130", "name"=>"Tourism & Hospitality", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"131", "name"=>"Environmental Studies", "sectionId"=>"4", "categoryId"=>"10", "weekPeriod"=>"1"),
-            array("id"=>"132", "name"=>"GIT", "sectionId"=>"5", "categoryId"=>"11", "weekPeriod"=>"1"),
-            array("id"=>"133", "name"=>"General English", "sectionId"=>"5", "categoryId"=>"11", "weekPeriod"=>"1")
+            array("id"=>"106", "name"=>"Child Psychology & Care", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"107", "name"=>"Health & Social Care", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"108", "name"=>"Physical Education & Sports", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"109", "name"=>"Performing Arts", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"110", "name"=>"Event Management", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"111", "name"=>"A/L Art & Craft", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"112", "name"=>"Interior Designing", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"113", "name"=>"Fashion Designing", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"114", "name"=>"Graphic Design", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"115", "name"=>"Art & Designing", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"116", "name"=>"Landscaping", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"117", "name"=>"Applied Horticulural Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"118", "name"=>"Livestock Product Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"119", "name"=>"Food Processing Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"120", "name"=>"Aquatic Resource  Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"121", "name"=>"Plantation Product Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"122", "name"=>"Construction  Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"123", "name"=>"Automobile Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"124", "name"=>"Electrical and Electronic  Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"125", "name"=>"Textile & Apparel Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"126", "name"=>"Metal Fabrication Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"127", "name"=>"Aluminum Fabrication Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"128", "name"=>"Computer Hardware & Networking (Web Designing and Software Development)", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"129", "name"=>"Manufacturing", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"130", "name"=>"Tourism & Hospitality", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"131", "name"=>"Environmental Studies", "sectionId"=>"3", "categoryId"=>"10", "weekPeriod"=>"1"),
+            array("id"=>"132", "name"=>"GIT", "sectionId"=>"3", "categoryId"=>"11", "weekPeriod"=>"1"),
+            array("id"=>"133", "name"=>"General English", "sectionId"=>"3", "categoryId"=>"11", "weekPeriod"=>"1")
         );
 
         DB::table('subjects')->insert($data);

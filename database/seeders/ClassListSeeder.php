@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ClassListSeeder extends Seeder
 {
@@ -13,7 +13,11 @@ class ClassListSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable FK checks → safe truncate
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('class_lists')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
 
         $data = array(
             array('id' => '1','name' => '1 - A CLASS','gradeId' => '1','sectionId' => '1','active' => '1'),
@@ -541,31 +545,31 @@ class ClassListSeeder extends Seeder
             array('id' => '523','name' => '13 - W 13 YEARS CLASS','gradeId' => '13','sectionId' => '7','active' => '1'),
             array('id' => '524','name' => '13 - X 13 YEARS CLASS','gradeId' => '13','sectionId' => '7','active' => '1'),
             array('id' => '525','name' => '13 - Y 13 YEARS CLASS','gradeId' => '13','sectionId' => '7','active' => '1'),
-            array('id' => '526','name' => 'SPECIAL EDUCATION - A CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '527','name' => 'SPECIAL EDUCATION - B CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '528','name' => 'SPECIAL EDUCATION - C CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '529','name' => 'SPECIAL EDUCATION - D CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '530','name' => 'SPECIAL EDUCATION - E CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '531','name' => 'SPECIAL EDUCATION - F CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '532','name' => 'SPECIAL EDUCATION - G CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '533','name' => 'SPECIAL EDUCATION - H CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '534','name' => 'SPECIAL EDUCATION - I CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '535','name' => 'SPECIAL EDUCATION - J CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '536','name' => 'SPECIAL EDUCATION - K CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '537','name' => 'SPECIAL EDUCATION - L CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '538','name' => 'SPECIAL EDUCATION - M CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '539','name' => 'SPECIAL EDUCATION - N CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '540','name' => 'SPECIAL EDUCATION - O CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '541','name' => 'SPECIAL EDUCATION - P CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '542','name' => 'SPECIAL EDUCATION - Q CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '543','name' => 'SPECIAL EDUCATION - R CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '544','name' => 'SPECIAL EDUCATION - S CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '545','name' => 'SPECIAL EDUCATION - T CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '546','name' => 'SPECIAL EDUCATION - U CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '547','name' => 'SPECIAL EDUCATION - V CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '548','name' => 'SPECIAL EDUCATION - W CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '549','name' => 'SPECIAL EDUCATION - X CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
-            array('id' => '550','name' => 'SPECIAL EDUCATION - Y CLASS','gradeId' => '0','sectionId' => '8','active' => '1'),
+            array('id' => '526','name' => 'SPECIAL EDUCATION - A CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '527','name' => 'SPECIAL EDUCATION - B CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '528','name' => 'SPECIAL EDUCATION - C CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '529','name' => 'SPECIAL EDUCATION - D CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '530','name' => 'SPECIAL EDUCATION - E CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '531','name' => 'SPECIAL EDUCATION - F CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '532','name' => 'SPECIAL EDUCATION - G CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '533','name' => 'SPECIAL EDUCATION - H CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '534','name' => 'SPECIAL EDUCATION - I CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '535','name' => 'SPECIAL EDUCATION - J CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '536','name' => 'SPECIAL EDUCATION - K CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '537','name' => 'SPECIAL EDUCATION - L CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '538','name' => 'SPECIAL EDUCATION - M CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '539','name' => 'SPECIAL EDUCATION - N CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '540','name' => 'SPECIAL EDUCATION - O CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '541','name' => 'SPECIAL EDUCATION - P CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '542','name' => 'SPECIAL EDUCATION - Q CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '543','name' => 'SPECIAL EDUCATION - R CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '544','name' => 'SPECIAL EDUCATION - S CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '545','name' => 'SPECIAL EDUCATION - T CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '546','name' => 'SPECIAL EDUCATION - U CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '547','name' => 'SPECIAL EDUCATION - V CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '548','name' => 'SPECIAL EDUCATION - W CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '549','name' => 'SPECIAL EDUCATION - X CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
+            array('id' => '550','name' => 'SPECIAL EDUCATION - Y CLASS','gradeId' => '14','sectionId' => '8','active' => '1'),
         );
 
         DB::table('class_lists')->insert($data);

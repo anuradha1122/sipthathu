@@ -11,7 +11,7 @@ class UpdateteacherTransferRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateteacherTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'principal' => ['sometimes', 'required', 'integer', 'in:1,2,3,4'],
+            'decision1' => ['sometimes', 'required', 'integer', 'in:1,2'],
+            'decision2' => ['sometimes', 'required', 'integer', 'in:1,2'],
+            'decision3' => ['sometimes', 'required', 'integer', 'in:1,2'],
+            'decision4' => ['sometimes', 'required', 'integer', 'in:1,2,3'],
         ];
     }
 }

@@ -13,19 +13,30 @@ return new class extends Migration
     {
         Schema::create('contact_infos', function (Blueprint $table) {
             $table->id();
-            $table->integer('userId')->unsigned()->required()->unique();
-            $table->string('permAddressLine1', 80)->required();
-            $table->string('permAddressLine2', 80)->required();
-            $table->string('permAddressLine3', 80)->required();
+
+            // FK to users (uuid instead of int)
+            $table->foreignId('userId')->unique()->constrained('users')->restrictOnDelete();
+
+            // Permanent address (all required)
+            $table->string('permAddressLine1', 80);
+            $table->string('permAddressLine2', 80);
+            $table->string('permAddressLine3', 80);
+
+            // Temporary address (optional)
             $table->string('tempAddressLine1', 80)->nullable();
             $table->string('tempAddressLine2', 80)->nullable();
             $table->string('tempAddressLine3', 80)->nullable();
-            $table->string('mobile1', 10)->required()->unique();
-            $table->string('mobile2', 10)->required()->nullable();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Mobile numbers
+            $table->string('mobile1', 15)->unique(); // primary, required
+            $table->string('mobile2', 15)->nullable(); // secondary, optional
+
+            $table->tinyInteger('active')->default(1);
+
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

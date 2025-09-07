@@ -13,14 +13,31 @@ return new class extends Migration
     {
         Schema::create('user_service_appointments', function (Blueprint $table) {
             $table->id();
-            $table->integer('userServiceId')->unsigned()->required();
-            $table->integer('workPlaceId')->unsigned()->required();
-            $table->date('appointedDate')->required();
+
+            // Foreign UUIDs
+            $table->foreignId('userServiceId')
+                  ->constrained('user_in_services')
+                  ->restrictOnDelete();
+
+            $table->foreignId('workPlaceId')
+                  ->constrained('work_places')
+                  ->restrictOnDelete();
+
+            $table->foreignId('reason')
+                  ->nullable()
+                  ->constrained('appointment_terminations')
+                  ->nullOnDelete();
+
+            $table->tinyInteger('appointmentType')->default(1);
+
+            // Appointment details
+            $table->date('appointedDate');
             $table->date('releasedDate')->nullable();
-            $table->tinyInteger('appointmentType')->default(1)->required();
-            $table->integer('reason')->nullable();
-            $table->tinyInteger('current')->default(1)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Status flags
+            $table->boolean('current')->default(true);
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
     }

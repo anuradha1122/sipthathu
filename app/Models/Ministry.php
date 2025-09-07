@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Ministry extends Model
 {
     use HasFactory;
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'officeId');
+    }
 }

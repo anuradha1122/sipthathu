@@ -10,6 +10,8 @@ use App\Models\School;
 class FormProvinceSchool extends Component
 {
 
+    public $schoolName;
+
     public $provinces;
     public $districts;
     public $zones;
@@ -19,7 +21,7 @@ class FormProvinceSchool extends Component
     public $selectedZone;
     public $selectedSchool;
 
-    public function __construct()
+    public function mount()
     {
         $this->districts = collect([]);
         $this->zones = collect([]);
@@ -56,7 +58,7 @@ class FormProvinceSchool extends Component
             ->where('work_places.active', 1)
             ->where('schools.active', 1)
             ->where('offices.active', 1)
-            ->select('schools.id as id', 'work_places.name as name')
+            ->select('work_places.id as id', 'work_places.name as name')
             ->get();
             //dd($this->schools);
     }

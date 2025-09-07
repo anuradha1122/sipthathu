@@ -18,7 +18,7 @@ class TeacherProfile extends Component
     public $previousAppointments;
     public $currentAppointments;
     public $previousAttachAppointments;
-    public $currentAttachAppointment;
+    public $currentAttachAppointments;
     public $educationQualifications;
     public $professionalQualifications;
     public $family;

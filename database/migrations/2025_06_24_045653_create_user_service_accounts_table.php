@@ -13,13 +13,25 @@ return new class extends Migration
     {
         Schema::create('user_service_accounts', function (Blueprint $table) {
             $table->id();
-            $table->integer('userServiceId')->unsigned()->required();
-            $table->integer('year')->unsigned()->required();
-            $table->date('incrementDate')->required();
-            $table->tinyInteger('current')->default(1)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign key to user_service
+            $table->foreignId('userServiceId')
+                  ->constrained('user_in_services')
+                  ->restrictOnDelete();
+
+            // Account year
+            $table->unsignedSmallInteger('year');
+
+            // Increment date
+            $table->date('incrementDate');
+
+            // Flags
+            $table->boolean('current')->default(true);
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

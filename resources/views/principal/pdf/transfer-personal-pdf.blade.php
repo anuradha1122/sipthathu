@@ -72,74 +72,88 @@
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ Auth::user()->nic; }}</td>
         </tr>
         <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Transfer Type</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->typeName }}</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Appointment Letter No</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->appointmentLetterNo }}</td>
         </tr>
         <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Service Conformation</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->serviceConfirm }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Distance Between Current School & home</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->schoolDistance." Km" }}</td>
+        </tr>
+
+        <tr style="border: 1px solid #777;">
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Transfer Reason</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->reasonName }}</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->reason }}</td>
         </tr>
         <tr style="border: 1px solid #777;">
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 1</td>
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->school1Name }}</td>
         </tr>
         <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 1 To Home Distance</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">@if($transfer->distance1 != NULL){{ $transfer->distance1." Km" }}@else{{ " " }}@endif</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 2</td>
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->school2Name }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 2 To Home Distance</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">@if($transfer->distance2 != NULL){{ $transfer->distance2." Km" }}@else{{ " " }}@endif</td>
         </tr>
         <tr style="border: 1px solid #777;">
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 3</td>
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->school3Name }}</td>
         </tr>
         <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 3 To Home Distance</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">@if($transfer->distance3 != NULL){{ $transfer->distance3." Km" }}@else{{ " " }}@endif</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 4</td>
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->school4Name }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 4 To Home Distance</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">@if($transfer->distance4 != NULL){{ $transfer->distance4." Km" }}@else{{ " " }}@endif</td>
         </tr>
         <tr style="border: 1px solid #777;">
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 5</td>
             <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->school5Name }}</td>
         </tr>
         <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">If there aren’t vacancies in the requested zone, do you like to be transferred to any school in the requested zone</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->anySchoolText }}</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 5 To Home Distance</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">@if($transfer->distance5 != NULL){{ $transfer->distance5." Km" }}@else{{ " " }}@endif</td>
         </tr>
         <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Current teaching grades (Only for teachers who teach in primary grades)</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->gradeName }}</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">If there aren’t vacancies in the requested zone, do you like to be transferred to any school in the requested zone</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->anySchool }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Have children with special needs</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->specialChildren }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Are you looking for a transfer</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->expectTransfer }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Current Position</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->position }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Reasons for requesting transfer or not</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->reason }}</td>
+        </tr>
+        <tr style="border: 1px solid #777;">
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Mentions</td>
+            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->mention }}</td>
         </tr>
     </table>
 
-        <p style="padding: 10px; font-size: 11px;">If current school service period is more than 5 years,  expected schools to be transfer within the zone</p>
-    <table style="border: 1px solid #777;">
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 1</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->alterSchool1Name }}</td>
-        </tr>
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 2</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->alterSchool2Name }}</td>
-        </tr>
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 3</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->alterSchool3Name }}</td>
-        </tr>
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 4</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->alterSchool4Name }}</td>
-        </tr>
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">School 5</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->alterSchool5Name }}</td>
-        </tr>
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">Other extra-curricular activities entrusted in the present school</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->extraCurricular }}</td>
-        </tr>
-        <tr style="border: 1px solid #777;">
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">If you have anything else to mention, please mention it in this column</td>
-            <td style="width: 30px; vertical-align: middle; border: 1px solid #777;">{{ $transfer->mention }}</td>
-        </tr>
-      </table>
     </div>
 
     <div class="footer">

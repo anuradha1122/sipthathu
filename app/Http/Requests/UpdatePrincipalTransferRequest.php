@@ -11,7 +11,7 @@ class UpdatePrincipalTransferRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdatePrincipalTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'decision1' => ['sometimes', 'required', 'integer', 'in:1,2'],
+            'decision2' => ['sometimes', 'required', 'integer', 'in:1,2'],
+            'decision3' => ['sometimes', 'required', 'integer', 'in:1,2'],
+            'decision4' => ['sometimes', 'required', 'integer', 'in:1,2,3'],
         ];
     }
 }

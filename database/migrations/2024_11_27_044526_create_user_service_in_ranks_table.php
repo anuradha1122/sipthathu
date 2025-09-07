@@ -13,11 +13,21 @@ return new class extends Migration
     {
         Schema::create('user_service_in_ranks', function (Blueprint $table) {
             $table->id();
-            $table->integer('userServiceId')->unsigned()->required();
-            $table->tinyInteger('rankId')->unsigned()->required();
-            $table->date('rankedDate')->required();
-            $table->tinyInteger('current')->default(1)->required();
-            $table->tinyInteger('active')->default(1)->required();
+            // Foreign key to user_in_services (UUID)
+            $table->foreignId('userServiceId')
+                  ->constrained('user_in_services')
+                  ->restrictOnDelete();
+
+            // Foreign key to ranks (if ranks.id is UUID, otherwise use foreignId)
+            $table->foreignId('rankId')
+                  ->constrained('ranks')
+                  ->restrictOnDelete();
+
+            $table->date('rankedDate');
+
+            $table->boolean('current')->default(1);
+            $table->boolean('active')->default(1);
+
             $table->timestamps();
         });
     }

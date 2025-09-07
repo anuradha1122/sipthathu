@@ -13,15 +13,25 @@ return new class extends Migration
     {
         Schema::create('work_place_contact_infos', function (Blueprint $table) {
             $table->id();
-            $table->integer('workPlaceId')->unsigned()->required()->unique();
-            $table->string('addressLine1', 80)->required();
-            $table->string('addressLine2', 80)->required();
-            $table->string('addressLine3', 80)->required();
-            $table->string('mobile1', 10)->required()->unique();
-            $table->string('mobile2', 10)->required()->unique();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign key to work_places
+            $table->foreignId('workPlaceId')
+                  ->constrained('work_places')
+                  ->restrictOnDelete()
+                  ->unique(); // assuming one contact info per workplace
+
+            $table->string('addressLine1', 80);
+            $table->string('addressLine2', 80);
+            $table->string('addressLine3', 80);
+
+            $table->string('mobile1', 10)->unique();
+            $table->string('mobile2', 10)->nullable()->unique(); // mobile2 may not be required
+
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

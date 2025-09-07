@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class EducationQualificationSeeder extends Seeder
 {
@@ -13,7 +13,10 @@ class EducationQualificationSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable FK checks and truncate
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('education_qualifications')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = [
             ['name' => 'Below O/L', 'qualificationTypeId' => 1],
@@ -68,7 +71,7 @@ class EducationQualificationSeeder extends Seeder
             ['name' => 'Associate of Science (AS)', 'qualificationTypeId' => 5],
             ['name' => 'Associate of Arts (AA)', 'qualificationTypeId' => 5],
         ];
-        
+
         DB::table('education_qualifications')->insert($data);
     }
 }

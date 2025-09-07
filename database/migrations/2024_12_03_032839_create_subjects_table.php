@@ -13,13 +13,28 @@ return new class extends Migration
     {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 200)->required();
-            $table->mediumInteger('sectionId')->unsigned()->required();
-            $table->mediumInteger('categoryId')->unsigned()->required();
+
+            $table->string('name', 200);
+
+            // Foreign key to subject_sections
+            $table->foreignId('sectionId')
+                  ->constrained('subject_sections')
+                  ->restrictOnDelete();
+
+            // Foreign key to subject_categories
+            $table->foreignId('categoryId')
+                  ->constrained('subject_categories')
+                  ->restrictOnDelete();
+
+            // Optional weekly period
             $table->mediumInteger('weekPeriod')->unsigned()->nullable();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

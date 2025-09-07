@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\DashboardController;
@@ -22,9 +24,12 @@ use App\Http\Controllers\PDFController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+// Landing page routes
+Route::get('/', [LandingPageController::class, 'index'])->name('landing.index');
+Route::get('/about', [LandingPageController::class, 'about'])->name('landing.about');
+Route::get('/features', [LandingPageController::class, 'features'])->name('landing.features');
+Route::get('/contact', [LandingPageController::class, 'contact'])->name('landing.contact');
+Route::get('/login-as', [LandingPageController::class, 'loginRedirection'])->name('landing.login-redirection');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -41,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/attachment', [ProfileController::class, 'attachment'])->name('profile.attachment');
 });
 
 Route::middleware('auth')->group(function () {
@@ -50,15 +56,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/myappointment', [UserController::class, 'myappointment'])->name('profile.myappointment');
 
     /* Teacher Section */
-    Route::get('/teacher/dashboard', [UserController::class, 'teacherindex'])->name('teacher.dashboard');
-    Route::get('/teacher/register', [UserController::class, 'teachercreate'])->name('teacher.register');
-    Route::post('/teacher/register', [UserController::class, 'teacherstore'])->name('teacher.store');
-    Route::get('/teacher/search', [UserController::class, 'teachersearch'])->name('teacher.search');
-    Route::get('/teacher/reports', [UserController::class, 'teacherreports'])->name('teacher.reports');
-    Route::get('/teacher/fullreportcurrent', [UserController::class, 'teacherfullreportcurrent'])->name('teacher.fullreportcurrent');
-    Route::get('/teacher/profile', [UserController::class, 'teacherprofile'])->name('teacher.profile');
-    Route::get('/teacher/profileedit', [UserController::class, 'teacherprofileedit'])->name('teacher.profileedit');
-    Route::post('/teacher/profileupdate', [UserController::class, 'teacherprofileupdate'])->name('teacher.profileupdate');
+    Route::get('/teacher/dashboard', [TeacherController::class, 'index'])->name('teacher.dashboard');
+    Route::get('/teacher/reportlist', [TeacherController::class, 'reportlist'])->name('teacher.reportlist');
+    Route::get('/teacher/fullreportcurrent', [TeacherController::class, 'fullreportcurrent'])->name('teacher.fullreportcurrent');
+    Route::get('/teacher/register', [TeacherController::class, 'create'])->name('teacher.register');
+    Route::post('/teacher/register', [TeacherController::class, 'store'])->name('teacher.store');
+    Route::get('/teacher/search', [TeacherController::class, 'search'])->name('teacher.search');
+
+    Route::get('/teacher/profile', [TeacherController::class, 'profile'])->name('teacher.profile');
+    Route::get('/teacher/profileedit', [TeacherController::class, 'profileedit'])->name('teacher.profileedit');
+    Route::post('/teacher/profileupdate', [TeacherController::class, 'profileupdate'])->name('teacher.profileupdate');
 
 
     /* Teacher Transfer Section */
@@ -66,6 +73,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/teacher/transfer', [TeacherTransferController::class, 'teacherindex'])->name('teacher.transfer');
     Route::post('/teacher/transfercompleate', [TeacherTransferController::class, 'teacherstore'])->name('teacher.transferstore');
     Route::get('/teacher-transfers-pdf', [TeacherTransferController::class, 'teacherPersonalPdf']);
+    Route::get('/teachertransferprincipallist', [TeacherTransferController::class, 'teachertransferprincipallist'])->name('teacher.transferprincipallist');
+    Route::get('/teachertransferzonelist', [TeacherTransferController::class, 'teachertransferzonelist'])->name('teacher.transferzonelist');
+    Route::get('/teachertransferprincipalprofile', [TeacherTransferController::class, 'teachertransferprincipalprofile'])->name('teacher.transferprincipalprofile');
+    Route::get('/teachertransferzonalprofile', [TeacherTransferController::class, 'teachertransferzonalprofile'])->name('teacher.transferzonalprofile');
+    Route::post('/teachertransferprincipalprofileconfirm', [TeacherTransferController::class, 'teachertransferprincipalprofilestore'])->name('teacher.transferprincipalprofilestore');
+    Route::post('/teachertransferzonalprofileconfirm', [TeacherTransferController::class, 'teachertransferzonalprofilestore'])->name('teacher.transferzonalprofilestore');
+    Route::get('/teachertransfersummary', [TeacherTransferController::class, 'transfersummary'])->name('teacher.transfersummary');
 
     /* Non Academic Section */
     Route::get('/nonacademic/dashboard', [UserController::class, 'nonacademicindex'])->name('nonacademic.dashboard');
@@ -95,6 +109,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/principal/transfer', [PrincipalTransferController::class, 'principalindex'])->name('principal.transfer');
     Route::post('/principal/transfercompleate', [PrincipalTransferController::class, 'principalstore'])->name('principal.transferstore');
     Route::get('/principal-transfers-pdf', [PrincipalTransferController::class, 'principalPersonalPdf']);
+    Route::get('/principaltransferprincipallist', [PrincipalTransferController::class, 'principaltransferprincipallist'])->name('principal.transferprincipallist');
+    Route::get('/principaltransferzonelist', [PrincipalTransferController::class, 'principaltransferzonelist'])->name('principal.transferzonelist');
+    Route::get('/principaltransferprincipalprofile', [PrincipalTransferController::class, 'principaltransferprincipalprofile'])->name('principal.transferprincipalprofile');
+    Route::get('/principaltransferzonalprofile', [PrincipalTransferController::class, 'principaltransferzonalprofile'])->name('principal.transferzonalprofile');
+    Route::post('/principaltransferprincipalprofileconfirm', [PrincipalTransferController::class, 'principaltransferprincipalprofilestore'])->name('principal.transferprincipalprofilestore');
+    Route::post('/principaltransferzonalprofileconfirm', [PrincipalTransferController::class, 'principaltransferzonalprofilestore'])->name('principal.transferzonalprofilestore');
+    Route::get('/principaltransfersummary', [PrincipalTransferController::class, 'transfersummary'])->name('principal.transfersummary');
 
 Route::get('/sleas/dashboard', [UserController::class, 'sleasindex'])->name('sleas.dashboard');
 Route::get('/sleas/register', [UserController::class, 'sleascreate'])->name('sleas.register');
@@ -110,6 +131,7 @@ Route::post('/student/register', [StudentController::class, 'store'])->name('stu
 Route::get('/student/search', [StudentController::class, 'search'])->name('student.search');
 Route::get('/student/reports', [StudentController::class, 'reports'])->name('student.reports');
 Route::get('/student/profile', [StudentController::class, 'profile'])->name('student.profile');
+Route::get('/student/{studentNo}', [StudentController::class, 'idpdf'])->name('student.id');
 
 
 Route::get('/school/search', [SchoolController::class, 'search'])->name('school.search');

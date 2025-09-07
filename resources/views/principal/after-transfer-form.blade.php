@@ -13,11 +13,11 @@
 
                 {{-- Center the button --}}
                 <div class="flex justify-center mt-6">
-                    <a href="{{ route('teacher.transfer') }}"
+                    <a href="{{ route('principal.transfer') }}"
                         class="inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition">
                         Back
                     </a>
-                    <a href="{{ url('/teacher-transfers-pdf') }}?typeId={{ $typeId }}" target="_blank"
+                    <a href="{{ url('/principal-transfers-pdf') }}" target="_blank"
                     class="mx-2 inline-block px-6 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition">
                         Download PDF
                     </a>

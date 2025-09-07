@@ -13,10 +13,15 @@ return new class extends Migration
     {
         Schema::create('school_ethnicities', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            $table->string('name', 50);
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

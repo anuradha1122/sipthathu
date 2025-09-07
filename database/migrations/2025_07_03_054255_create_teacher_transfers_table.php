@@ -13,25 +13,79 @@ return new class extends Migration
     {
         Schema::create('teacher_transfers', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('refferenceNo')->unsigned()->required();
-            $table->integer('userServiceId')->unsigned()->required();
-            $table->tinyInteger('typeId')->unsigned()->required();
-            $table->tinyInteger('reasonId')->unsigned()->required();
-            $table->integer('school1Id')->unsigned()->required();
-            $table->integer('school2Id')->unsigned()->nullable();
-            $table->integer('school3Id')->unsigned()->nullable();
-            $table->integer('school4Id')->unsigned()->nullable();
-            $table->integer('school5Id')->unsigned()->nullable();
-            $table->tinyInteger('anyschool')->unsigned()->required();
+
+            // Reference number
+            $table->unsignedBigInteger('referenceNo');
+
+            // Foreign key to user_in_services
+            $table->foreignId('userServiceId')
+                  ->constrained('user_in_services')
+                  ->restrictOnDelete();
+
+            // Foreign keys to transfer types and reasons
+            $table->foreignId('typeId')
+                  ->constrained('transfer_types')
+                  ->restrictOnDelete();
+
+            $table->foreignId('reasonId')
+                  ->constrained('transfer_reasons')
+                  ->restrictOnDelete();
+
+            // Schools (primary choices)
+            $table->foreignId('school1Id')
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('school2Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('school3Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('school4Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('school5Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            // Any school flag
+            $table->boolean('anySchool')->default(false);
+
+            // Optional grade
             $table->tinyInteger('gradeId')->unsigned()->nullable();
-            $table->integer('alterSchool1Id')->unsigned()->nullable();
-            $table->integer('alterSchool2Id')->unsigned()->nullable();
-            $table->integer('alterSchool3Id')->unsigned()->nullable();
-            $table->integer('alterSchool4Id')->unsigned()->nullable();
-            $table->integer('alterSchool5Id')->unsigned()->nullable();
+
+            // Alternate schools
+            $table->foreignId('alterSchool1Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('alterSchool2Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('alterSchool3Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('alterSchool4Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->foreignId('alterSchool5Id')->nullable()
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            // Extra fields
             $table->string('extraCurricular', 1000)->nullable();
             $table->string('mention', 1000)->nullable();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
     }

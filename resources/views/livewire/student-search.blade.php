@@ -13,12 +13,15 @@
             <li class="flex justify-between gap-x-6 py-5">
                 <div class="flex min-w-0 gap-x-4">
                     @if ($student->profilePicture)
-                        <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="{{ $student->profilePicture }}" alt="">
+                        <img src="{{ asset($student->profilePicture) }}"
+                            alt="Student Photo"
+                            class="h-12 w-12 rounded-full object-cover border border-gray-300 shadow-sm">
                     @else
-                        <div class="h-12 w-12 flex-none rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold">
+                        <div class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold shadow-sm border border-gray-300">
                             {{ strtoupper(substr($student->nameWithInitials, 0, 1)) }}
                         </div>
                     @endif
+
                     <div class="min-w-0 flex-auto">
                     <p class="text-sm font-semibold leading-6">{{ $student->nameWithInitials }}</p>
                     <p class="mt-1 truncate text-xs leading-5 text-gray-500">{{ $student->school }}</p>
