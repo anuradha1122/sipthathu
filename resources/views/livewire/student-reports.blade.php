@@ -54,7 +54,7 @@
                 <x-form-list-input-field name="school" id="school" :options="$schoolList" wire:model.live="selectedSchool" required/>
             </div>
         @endif
-         
+
         <div class="sm:col-span-1 px-1">
             <x-form-input-label for="race" value="Race" />
             <x-form-list-input-field name="race" id="race" :options="$raceList" wire:model.live="race" required/>
@@ -93,6 +93,7 @@
                     <tr>
                         @if (!empty($results))
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">#</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Student No</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name With Initials</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Race</th>
@@ -102,14 +103,16 @@
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Birth Day</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Grade/Class</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">School</th>
-                        @endif      
+                        @endif
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                    
+
                         @foreach ($results as $index => $result)
                         <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $results->firstItem() + $index }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a target="_blank" href="{{ route('student.id', ['studentNo' => $result->studentNo]) }}">{{ $result->studentNo }}</a>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->nameWithInitials }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $result->race }}</td>
@@ -129,7 +132,7 @@
         <div class="mt-4 text-start">
             @if (!empty($results))
             {{ $results->links() }}
-            @endif   
+            @endif
         </div>
     </div>
 </div>

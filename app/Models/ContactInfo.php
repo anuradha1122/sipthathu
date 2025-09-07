@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class ContactInfo extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'userId',
@@ -19,5 +20,6 @@ class ContactInfo extends Model
         'tempAddressLine3',
         'mobile1',
         'mobile2',
+        'active',
     ];
 }

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
+
             $table->bigInteger('studentNo')->nullable()->unique();
             $table->string('identificationNo', 100)->nullable()->unique();
             $table->bigInteger('registerNo')->nullable();
@@ -22,7 +23,9 @@ return new class extends Migration
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
 
-            $table->tinyInteger('active')->default(1)->required();
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->rememberToken();
             $table->timestamps();
         });

@@ -43,20 +43,29 @@ class DatabaseSeeder extends Seeder
         $this->call(DistrictSeeder::class);
         $this->call(DsDivisionSeeder::class);
         $this->call(GnDivisionSeeder::class);
-        $this->call(SchoolSeeder::class);
         $this->call(OfficeSeeder::class);
+        $this->call(SchoolSeeder::class);
         $this->call(MinistrySeeder::class);
-        $this->call(EducationQualificationSeeder::class);
         $this->call(EducationQualificationTypeSeeder::class);
-        $this->call(ProfessionalQualificationSeeder::class);
+        $this->call(EducationQualificationSeeder::class);
         $this->call(ProfessionalQualificationTypeSeeder::class);
+        $this->call(ProfessionalQualificationSeeder::class);
+        $this->call(SubjectSectionSeeder::class);
+        $this->call(SubjectCategorySeeder::class);
         $this->call(SubjectSeeder::class);
         $this->call(SubjectMediumSeeder::class);
         $this->call(CircularSubjectSeeder::class);
-        $this->call(SubjectSectionSeeder::class);
-        $this->call(SubjectCategorySeeder::class);
         $this->call(AppointmentCategorySeeder::class);
         $this->call(AppointmentMediumSeeder::class);
+        $this->call(ClassMediumSeeder::class);
+        $this->call(SchoolSectionSeeder::class);
+        $this->call(GradeSeeder::class);
+        $this->call(BloodGroupSeeder::class);
+        $this->call(IllnessSeeder::class);
+        $this->call(GuardianRelationshipSeeder::class);
+        $this->call(AppointmentTerminationSeeder::class);
+        $this->call(TransferTypeSeeder::class);
+        $this->call(TransferReasonSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(UserInServiceSeeder::class);
         $this->call(UserServiceAppointmentSeeder::class);
@@ -64,14 +73,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ContactInfoSeeder::class);
         $this->call(PersonalInfoSeeder::class);
         $this->call(ClassListSeeder::class);
-        $this->call(GradeSeeder::class);
-        $this->call(SchoolSectionSeeder::class);
-        $this->call(GuardianRelationshipSeeder::class);
-        $this->call(BloodGroupSeeder::class);
-        $this->call(ClassMediumSeeder::class);
-        $this->call(IllnessSeeder::class);
-        $this->call(TransferTypeSeeder::class);
-        $this->call(TransferReasonSeeder::class);
-        $this->call(AppointmentTerminationSeeder::class);
+        
+
     }
 }

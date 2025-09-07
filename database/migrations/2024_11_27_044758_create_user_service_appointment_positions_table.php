@@ -13,14 +13,26 @@ return new class extends Migration
     {
         Schema::create('user_service_appointment_positions', function (Blueprint $table) {
             $table->id();
-            $table->integer('userServiceAppointmentId')->unsigned()->required();
-            $table->integer('positionId')->unsigned()->required();
-            $table->date('positionedDate')->required();
+
+            // Foreign key to user_service_appointments
+            $table->foreignId('userServiceAppId')
+                  ->constrained('user_service_appointments')
+                  ->restrictOnDelete();
+
+            // Foreign key to positions
+            $table->foreignId('positionId')
+                  ->constrained('positions')
+                  ->restrictOnDelete();
+
+            $table->date('positionedDate');
             $table->date('releasedDate')->nullable();
-            $table->tinyInteger('current')->default(1)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            $table->boolean('current')->default(true);
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

@@ -4,7 +4,7 @@
             <path d="{{ $d }}"></path>
         </svg>
         <p class="block font-sans text-sm antialiased font-bold leading-normal text-blue-gray-900">
-            {{ $heading }}
+            {!! $heading !!}
         </p>
     </div>
 </td>

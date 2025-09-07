@@ -6,10 +6,16 @@
                 <x-profile-heading heading="{{ $teacher->nameWithInitials }}" subHeading="{{ $teacher->nic }}" image="{{ $teacher->profilePicture }}" />
 
                 <x-form-success message="{{ session('success') }}" />
+                <x-form-error message="{{ session('error') }}" />
                 <script src="https://unpkg.com/alpinejs" defer></script>
                 <form method="POST" action="{{ route('teacher.profileupdate') }}" class="mx-auto mt-8 max-w-xl sm:mt-8" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-6 gap-x-8 gap-y-6 sm:grid-cols-6">
+
+                        @if ($category == 'userNic')
+                            <x-form-text-input-section size="sm:col-span-6" name="nic" id="nic" label="NIC" value="{{ old('nic') }}" />
+                        @endif
+
                         @if ($category == 'userName')
                             <x-form-text-input-section size="sm:col-span-6" name="name" id="name" label="Full Name" value="{{ old('name') }}" />
                         @endif
@@ -72,64 +78,228 @@
 
                         @if($category == 'userAppointment')
                             @if (session('positionId') == 6)
-                                <div x-data="{ showNewApp: false, showPrevApp: false, showDelApp: false, showTerminateApp: false, showPosiApp: false }" class="sm:col-span-6 gap-4">
+                                <div class="sm:col-span-6 gap-4">
 
                                     <!-- Add New Appointment -->
                                     <div class="sm:col-span-6 mt-6">
                                         <div class="flex justify-between items-center">
                                             <p class="font-bold">Add New Appointment</p>
-                                            <button type="button" @click="showNewApp = !showNewApp" class="text-blue-600 text-sm hover:underline">
-                                                <span x-text="showNewApp ? 'Hide' : 'Show'"></span>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="toggleNewAppointment()"
+                                            >
+                                                <span id="toggleText">Show</span>
                                             </button>
                                         </div>
                                         <hr class="my-2">
-                                        <div x-show="showNewApp" class="grid grid-cols-6 gap-6">
+
+                                        <div id="newAppointmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
                                             <x-form-list-input-section
                                                 size="sm:col-span-3"
-                                                name="zoneSchool"
-                                                id="zoneSchool"
+                                                name="newAppointmentSchool"
+                                                id="newAppointmentSchool"
                                                 label="School"
-                                                :options="$zone_school_lists" {{-- Replace with actual data --}}
+                                                :options="$zone_school_lists"
                                             />
-                                            <x-form-date-input-section size="sm:col-span-3" name="newAppointmentStartDay" id="newAppointmentStartDay" label="Start Day" value="{{ old('newAppointmentStartDay') }}" />
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="newAppointmentStartDay"
+                                                id="newAppointmentStartDay"
+                                                label="Start Day"
+                                                value="{{ old('newAppointmentStartDay') }}"
+                                            />
                                         </div>
                                     </div>
+
+                                    <script>
+                                        function toggleNewAppointment() {
+                                            const section = document.getElementById('newAppointmentSection');
+                                            const toggleText = document.getElementById('toggleText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
+                                    <!-- Add New Attachment -->
+                                    <div class="sm:col-span-6 mt-6">
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-bold">Add New Attachment</p>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="toggleNewAttachment()"
+                                            >
+                                                <span id="toggleAttachmentText">Show</span>
+                                            </button>
+                                        </div>
+                                        <hr class="my-2">
+
+                                        <div id="newAttachmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
+                                            <x-form-list-input-section
+                                                size="sm:col-span-3"
+                                                name="newAttachmentSchool"
+                                                id="newAttachmentSchool"
+                                                label="School"
+                                                :options="$zone_school_lists"
+                                            />
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="newAttachmentStartDay"
+                                                id="newAttachmentStartDay"
+                                                label="Start Day"
+                                                value="{{ old('newAttachmentStartDay') }}"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function toggleNewAttachment() {
+                                            const section = document.getElementById('newAttachmentSection');
+                                            const toggleText = document.getElementById('toggleAttachmentText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
+
 
                                     <!-- Add Previous Appointment -->
                                     <div class="sm:col-span-6 mt-6">
                                         <div class="flex justify-between items-center">
                                             <p class="font-bold">Add Previous Appointment</p>
-                                            <button type="button" @click="showPrevApp = !showPrevApp" class="text-blue-600 text-sm hover:underline">
-                                                <span x-text="showPrevApp ? 'Hide' : 'Show'"></span>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="togglePreviousAppointment()"
+                                            >
+                                                <span id="togglePrevText">Show</span>
                                             </button>
                                         </div>
                                         <hr class="my-2">
-                                        <div x-show="showPrevApp" class="grid grid-cols-6 gap-6">
-                                            <span class="sm:col-span-6">@livewire('formProvinceSchool')</span>
-                                            <x-form-date-input-section size="sm:col-span-3" name="previousAppointmentStartDay" id="previousAppointmentStartDay" label="Start Day" value="{{ old('previousAppointmentStartDay') }}" />
-                                            <x-form-date-input-section size="sm:col-span-3" name="previousAppointmentEndDay" id="previousAppointmentEndDay" label="End Day" value="{{ old('previousAppointmentEndDay') }}" />
+
+                                        <div id="previousAppointmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
+                                            <span class="sm:col-span-6">@livewire('form-province-school', ['schoolName' => 'previousSchool'])</span>
+
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="previousAppointmentStartDay"
+                                                id="previousAppointmentStartDay"
+                                                label="Start Day"
+                                                value="{{ old('previousAppointmentStartDay') }}"
+                                            />
+
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="previousAppointmentEndDay"
+                                                id="previousAppointmentEndDay"
+                                                label="End Day"
+                                                value="{{ old('previousAppointmentEndDay') }}"
+                                            />
                                         </div>
                                     </div>
+
+                                    <script>
+                                        function togglePreviousAppointment() {
+                                            const section = document.getElementById('previousAppointmentSection');
+                                            const toggleText = document.getElementById('togglePrevText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
+                                    <!-- Add Previous Attachment -->
+                                    <div class="sm:col-span-6 mt-6">
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-bold">Add Previous Attachment</p>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="togglePreviousAttachment()"
+                                            >
+                                                <span id="togglePrevAttachmentText">Show</span>
+                                            </button>
+                                        </div>
+                                        <hr class="my-2">
+
+                                        <div id="previousAttachmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
+                                            <span class="sm:col-span-6">@livewire('form-province-school', ['schoolName' => 'previousAttachedSchool'])</span>
+
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="previousAttachmentStartDay"
+                                                id="previousAttachmentStartDay"
+                                                label="Start Day"
+                                                value="{{ old('previousAttachmentStartDay') }}"
+                                            />
+
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="previousAttachmentEndDay"
+                                                id="previousAttachmentEndDay"
+                                                label="End Day"
+                                                value="{{ old('previousAttachmentEndDay') }}"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function togglePreviousAttachment() {
+                                            const section = document.getElementById('previousAttachmentSection');
+                                            const toggleText = document.getElementById('togglePrevAttachmentText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
 
 
                                     <!-- Terminate Appointment -->
                                     <div class="sm:col-span-6 mt-6">
                                         <div class="flex justify-between items-center">
                                             <p class="font-bold">Terminate Appointment</p>
-                                            <button type="button" @click="showTerminateApp = !showTerminateApp" class="text-blue-600 text-sm hover:underline">
-                                                <span x-text="showTerminateApp ? 'Hide' : 'Show'"></span>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="toggleTerminateAppointment()"
+                                            >
+                                                <span id="toggleTerminateText">Show</span>
                                             </button>
                                         </div>
                                         <hr class="my-2">
-                                        <div x-show="showTerminateApp" class="grid grid-cols-6 gap-6">
+
+                                        <div id="terminateAppointmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
                                             <x-form-list-input-section
                                                 size="sm:col-span-3"
                                                 name="terminateReason"
                                                 id="terminateReason"
                                                 label="Termination Reason"
-                                                :options="$appointment_termination_lists" {{-- Replace with actual data --}}
+                                                :options="$appointment_termination_lists"
                                             />
-
                                             <x-form-date-input-section
                                                 size="sm:col-span-3"
                                                 name="terminateDate"
@@ -140,43 +310,150 @@
                                         </div>
                                     </div>
 
+                                    <script>
+                                        function toggleTerminateAppointment() {
+                                            const section = document.getElementById('terminateAppointmentSection');
+                                            const toggleText = document.getElementById('toggleTerminateText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
+                                    <!-- Terminate Attachment -->
+                                    <div class="sm:col-span-6 mt-6">
+                                        <div class="flex justify-between items-center">
+                                            <p class="font-bold">Terminate Attachment</p>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="toggleTerminateAttachment()"
+                                            >
+                                                <span id="toggleTerminateAttachmentText">Show</span>
+                                            </button>
+                                        </div>
+                                        <hr class="my-2">
+
+                                        <div id="terminateAttachmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
+
+                                            <x-form-date-input-section
+                                                size="sm:col-span-3"
+                                                name="terminateAttachmentDate"
+                                                id="terminateAttachmentDate"
+                                                label="Termination Date"
+                                                value="{{ old('terminateAttachmentDate') }}"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function toggleTerminateAttachment() {
+                                            const section = document.getElementById('terminateAttachmentSection');
+                                            const toggleText = document.getElementById('toggleTerminateAttachmentText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
+
+
                                     <!-- Delete Appointment -->
                                     <div class="sm:col-span-6 mt-6">
                                         <div class="flex justify-between items-center">
                                             <p class="font-bold">Delete Appointment</p>
-                                            <button type="button" @click="showDelApp = !showDelApp" class="text-blue-600 text-sm hover:underline">
-                                                <span x-text="showDelApp ? 'Hide' : 'Show'"></span>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="toggleDeleteAppointment()"
+                                            >
+                                                <span id="toggleDeleteText">Show</span>
                                             </button>
                                         </div>
                                         <hr class="my-2">
-                                        <div x-show="showDelApp" class="grid grid-cols-6 gap-6">
-                                            <x-form-list-input-section size="sm:col-span-6" name="appointment_list" id="appointment_list" :options="$appointment_lists" label="Appointments" />
+
+                                        <div id="deleteAppointmentSection" class="grid grid-cols-6 gap-6" style="display: none;">
+                                            <x-form-list-input-section
+                                                size="sm:col-span-6"
+                                                name="appointment_list"
+                                                id="appointment_list"
+                                                :options="$appointment_lists"
+                                                label="Appointments"
+                                            />
                                         </div>
                                     </div>
+
+                                    <script>
+                                        function toggleDeleteAppointment() {
+                                            const section = document.getElementById('deleteAppointmentSection');
+                                            const toggleText = document.getElementById('toggleDeleteText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
 
 
                                     <!-- Change Position -->
                                     <div class="sm:col-span-6 mt-6">
                                         <div class="flex justify-between items-center">
                                             <p class="font-bold">Change Position</p>
-                                            <button type="button" @click="showPosiApp = !showPosiApp" class="text-blue-600 text-sm hover:underline">
-                                                <span x-text="showPosiApp ? 'Hide' : 'Show'"></span>
+                                            <button
+                                                type="button"
+                                                class="text-blue-600 text-sm hover:underline"
+                                                onclick="toggleChangePosition()"
+                                            >
+                                                <span id="toggleChangePosText">Show</span>
                                             </button>
                                         </div>
                                         <hr class="my-2">
-                                        <div x-show="showPosiApp" class="grid grid-cols-6 gap-6">
-                                            <x-form-list-input-section size="sm:col-span-6" name="position" id="position" :options="$positions" label="Positions" />
+
+                                        <div id="changePositionSection" class="grid grid-cols-6 gap-6" style="display: none;">
+                                            <x-form-list-input-section
+                                                size="sm:col-span-6"
+                                                name="position"
+                                                id="position"
+                                                :options="$positions"
+                                                label="Positions"
+                                            />
                                         </div>
                                     </div>
 
+                                    <script>
+                                        function toggleChangePosition() {
+                                            const section = document.getElementById('changePositionSection');
+                                            const toggleText = document.getElementById('toggleChangePosText');
+
+                                            if (section.style.display === 'none') {
+                                                section.style.display = 'grid';
+                                                toggleText.innerText = 'Hide';
+                                            } else {
+                                                section.style.display = 'none';
+                                                toggleText.innerText = 'Show';
+                                            }
+                                        }
+                                    </script>
+
+
                                 </div>
-
                             @endif
-
-                            {{-- <p class="sm:col-span-6">Change Semis Position</p>
-                            <hr class="sm:col-span-6">
-                            <x-form-list-input-section size="sm:col-span-6" name="position" id="position" :options="$positions" label="Current SEMIS Position" /> --}}
                         @endif
+
 
                         @if($category == 'userQualification')
                             <div x-data="{ showEduChange: false }" class="sm:col-span-6">

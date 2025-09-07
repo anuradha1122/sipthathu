@@ -13,11 +13,23 @@ return new class extends Migration
     {
         Schema::create('circular_subjects', function (Blueprint $table) {
             $table->id();
-            $table->mediumInteger('subjectId')->unsigned()->required();
-            $table->mediumInteger('mediumId')->unsigned()->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign key to subjects
+            $table->foreignId('subjectId')
+                  ->constrained('subjects')
+                  ->restrictOnDelete();
+
+            // Foreign key to subject_media (medium)
+            $table->foreignId('mediumId')
+                  ->constrained('subject_media')
+                  ->restrictOnDelete();
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

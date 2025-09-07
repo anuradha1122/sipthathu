@@ -13,14 +13,26 @@ return new class extends Migration
     {
         Schema::create('student_schools', function (Blueprint $table) {
             $table->id();
-            $table->integer('studentId')->unsigned()->required();
-            $table->integer('schoolId')->unsigned()->required();
-            $table->date('appointedDate')->required();
+
+            // Foreign keys
+            $table->foreignId('studentId')
+                  ->constrained('students')
+                  ->restrictOnDelete();
+
+            $table->foreignId('schoolId')
+                  ->constrained('schools')
+                  ->restrictOnDelete();
+
+            $table->date('appointedDate');
             $table->date('releasedDate')->nullable();
-            $table->tinyInteger('current')->default(1)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Current and active flags
+            $table->boolean('current')->default(true);
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

@@ -21,6 +21,8 @@ use App\Models\GuardianRelationship;
 use App\Models\ClassList;
 use App\Models\SchoolClassStudent;
 use App\Models\Illness;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class StudentController extends Controller
 {
@@ -339,6 +341,36 @@ class StudentController extends Controller
             'Student Reports' => 'student.reports'
         ];
         return view('student/reports',compact('option'));
+    }
+
+
+    public function idPdf($studentNo)
+    {
+        //$qrCode = base64_encode(QrCode::format('png')->size(50)->generate('123456789'));
+        //dd($studentNo);
+
+        $studentData = DB::table('students')
+            ->join('student_schools', 'students.id', '=', 'student_schools.studentId')
+            ->join('schools', 'student_schools.schoolId', '=', 'schools.id')
+            ->join('work_places', 'schools.workPlaceId', '=', 'work_places.id')
+            ->join('student_personal_infos', 'students.id', '=', 'student_personal_infos.studentId')
+            ->where('students.studentNo', $studentNo)
+            ->select(
+                'students.*',
+                'student_schools.schoolId',
+                'work_places.name as workplace_name',
+                'student_personal_infos.profilePicture'
+            )
+            ->first();
+
+                //dd($studentData->profilePicture);
+
+        $pdf = Pdf::loadView('student.pdf.student-id-pdf', compact('studentData'));
+
+        return $pdf->download('student-id.pdf');
+
+        //return $pdf->download();
+        return $pdf->stream();
     }
 
     /**

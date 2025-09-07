@@ -39,7 +39,7 @@ class SchoolController extends Controller
                 'School Search' => 'school.search',
                 'School Dashboard' => route('school.profile', ['id' => $id]),
             ];
-            
+
             $card_pack_1 = collect([
                 (object) [
                     'id' => 1,
@@ -68,7 +68,7 @@ class SchoolController extends Controller
                 ],
             ]);
             //dd($card_pack_1);
-            
+
         }elseif (session('schoolId') && !isset($id)) {
             $schoolId = session('schoolId');
             $chartData = [
@@ -83,7 +83,7 @@ class SchoolController extends Controller
                 'Dashboard' => 'dashboard',
                 'School Profile' => route('school.profile'),
             ];
-            
+
             $card_pack_1 = collect([
                 (object) [
                     'id' => 1,
@@ -140,7 +140,7 @@ class SchoolController extends Controller
     {
         //dd($id);
         if(!session('schoolId') && isset($id)){
- 
+
             $schoolId = $id;
             $option = [
                 'Dashboard' => 'dashboard',
@@ -149,7 +149,7 @@ class SchoolController extends Controller
                 'Class Profile' => route('school.classprofile', ['id' => $schoolId]),
             ];
             //dd($option);
-            
+
         }elseif (session('schoolId') && !isset($id)) {
 
             $schoolId = session('schoolId');
@@ -247,11 +247,11 @@ class SchoolController extends Controller
 
         // Assuming $grades is an array containing the grade values sent from the form
         $grades = $request->only([
-            'grade1', 'grade2', 'grade3', 'grade4', 'grade5', 'grade6', 
-            'grade7', 'grade8', 'grade9', 'grade10', 'grade11', 
-            'grade12art', 'grade12commerce', 'grade12science', 
-            'grade12technology', 'grade1213years', 'grade13art', 
-            'grade13commerce', 'grade13science', 'grade13technology', 
+            'grade1', 'grade2', 'grade3', 'grade4', 'grade5', 'grade6',
+            'grade7', 'grade8', 'grade9', 'grade10', 'grade11',
+            'grade12art', 'grade12commerce', 'grade12science',
+            'grade12technology', 'grade1213years', 'grade13art',
+            'grade13commerce', 'grade13science', 'grade13technology',
             'grade1313years', 'specialedu'
         ]);
 
@@ -317,10 +317,10 @@ class SchoolController extends Controller
             'School Profile' => route('school.profile'),
             'Class Profile' => 'school.classprofile',
         ];
-        
+
         //dd($card_pack_1);
         return view('school/classdashboard',compact('option','classes','chartData','school_detail'));
-    
+
     }
 
     // Custom function to determine class range start based on the grade key
@@ -377,7 +377,7 @@ class SchoolController extends Controller
     }
 
 
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -427,7 +427,7 @@ class SchoolController extends Controller
         //
     }
 
-    
+
 
     // public function reports()
     // {
@@ -438,5 +438,5 @@ class SchoolController extends Controller
     //     return view('school/reports',compact('option'));
     //}
 
-    
+
 }

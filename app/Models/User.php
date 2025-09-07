@@ -2,64 +2,37 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'nameWithInitials',
-        'nic',
-        'email',
-        'password',
+        'name', 'nameWithInitials', 'nic', 'email', 'password'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password' => 'hashed'
     ];
 
-    protected $appends = ['serviceId'];
+    // === Relationships ===
 
-    /**
-     * Relationship: User has one UserInService.
-     */
-    public function userInService()
+    public function currentUserInService()
     {
-        return $this->hasOne(UserInService::class, 'userId', 'id');
-    }
-
-    /**
-     * Accessor: Dynamically get the serviceId attribute.
-     */
-    public function getServiceIdAttribute()
-    {
-        return $this->userInService?->id; // Returns the `id` from the related UserInService model
+        return $this->hasOne(UserInService::class, 'userId')
+            ->whereNull('releasedDate')
+            ->where('active', 1);
     }
 }

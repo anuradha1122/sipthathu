@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('dashboards', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Dashboard name
+            $table->string('name', 50);
+
+            // Active status (boolean is cleaner, tinyInteger also works)
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

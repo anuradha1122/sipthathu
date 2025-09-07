@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OfficeSeeder extends Seeder
 {
@@ -13,8 +14,10 @@ class OfficeSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('offices')->truncate();
-
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        
         $data = array(
             array('id' => '1','workPlaceId' => '11','officeNo' => 'W10000','higherOfficeId' => NULL,'districtId' => NULL,'officeTypeId' => '1','active' => '1'),
             array('id' => '2','workPlaceId' => '12','officeNo' => 'W20000','higherOfficeId' => NULL,'districtId' => NULL,'officeTypeId' => '1','active' => '1'),
@@ -436,7 +439,7 @@ class OfficeSeeder extends Seeder
             array('id' => '418','workPlaceId' => '428','officeNo' => 'W91103','higherOfficeId' => '415','districtId' => '16','officeTypeId' => '3','active' => '1'),
             array('id' => '419','workPlaceId' => '429','officeNo' => 'W91104','higherOfficeId' => '415','districtId' => '16','officeTypeId' => '3','active' => '1'),
             array('id' => '420','workPlaceId' => '430','officeNo' => 'W91105','higherOfficeId' => '415','districtId' => '16','officeTypeId' => '3','active' => '1')
-          );
+        );
 
         DB::table('offices')->insert($data);
     }

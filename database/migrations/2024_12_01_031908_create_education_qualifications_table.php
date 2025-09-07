@@ -13,11 +13,20 @@ return new class extends Migration
     {
         Schema::create('education_qualifications', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->required();
-            $table->tinyInteger('qualificationTypeId')->unsigned()->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            $table->string('name', 100);
+
+            // Foreign key to education_qualification_types
+            $table->foreignId('qualificationTypeId')
+                  ->constrained('education_qualification_types')
+                  ->restrictOnDelete();
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**

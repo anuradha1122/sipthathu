@@ -14,6 +14,18 @@
 
                     <x-profile-data
 
+                        heading="Identification"
+                        :values="[
+                            'NIC' => $teacher->nic,
+                        ]"
+                        d="M12 12c2.28 0 4.5-.5 6-1.5C16.5 8.5 14.28 7 12 7c-2.28 0-4.5.5-6 1.5C7.5 11.5 9.72 12 12 12zM6 13c1.4-.8 3.05-1.3 6-1.3s4.6.5 6 1.3c2.56 1.45 4 3.49 4 5.5v1c0 .55-.45 1-1 1H2c-.55 0-1-.45-1-1v-1c0-2.01 1.44-4.05 4-5.5z"
+                        link="teacher.profileedit"
+                        :params="['id' => $teacher->cryptedId, 'category' => 'userNic']"
+                        action="{{ $profileAction }}"
+                    />
+
+                    <x-profile-data
+
                         heading="Name"
                         :values="[
                             'name' => $teacher->name,
@@ -103,7 +115,7 @@
                             'Previous Appointments' => $previousAppointments,
                             'Previous Attched Appointments' => $previousAttachAppointments,
                             'Current Appointments' => $currentAppointments,
-                            'Current Attached Appointment' => $currentAttachAppointment,
+                            'Current Attached Appointment' => $currentAttachAppointments,
                         ], function($value) {
                             return !empty($value); // Only include non-empty arrays
                         })"

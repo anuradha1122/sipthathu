@@ -7,10 +7,12 @@ use App\Http\Requests\StorePrincipalTransferRequest;
 use App\Http\Requests\UpdatePrincipalTransferRequest;
 use App\Models\PrincipalTransfer;
 use App\Models\UserServiceAppointment;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 
 class PrincipalTransferController extends Controller
 {
@@ -183,6 +185,173 @@ class PrincipalTransferController extends Controller
         $pdf = Pdf::loadView('principal.pdf.transfer-personal-pdf', compact('transfer'));
 
         return $pdf->download('principal-transfer.pdf');
+    }
+
+
+    public function principaltransferzonelist()
+    {
+        //dd(session('officeId'));
+        $principals = User::join('user_in_services', 'users.id', '=', 'user_in_services.userId')
+        ->join('user_service_appointments', 'user_in_services.id', '=', 'user_service_appointments.userServiceId')
+        ->join('work_places', 'user_service_appointments.workPlaceId', '=', 'work_places.id')
+        ->join('schools', 'work_places.id', '=', 'schools.workPlaceId')
+        ->join('offices', 'schools.officeId', '=', 'offices.id')
+        ->join('principal_transfers', 'user_in_services.id', '=', 'principal_transfers.userServiceId')
+        ->where('offices.higherOfficeId', session('officeId'))
+        ->whereNull('user_service_appointments.releasedDate')
+        ->whereNull('user_in_services.releasedDate')
+        ->where('principal_transfers.active', 1)
+        ->select(
+            'users.id AS userId',
+            'users.name AS principal',
+            'users.nic',
+            'work_places.name AS workPlace',
+            'principal_transfers.zonalId',
+            'principal_transfers.zonalReason1',
+            'principal_transfers.zonalReason2',
+            'principal_transfers.zonalReason3',
+            'principal_transfers.zonalReason4',
+            'principal_transfers.refferenceNo'
+        )
+        ->orderByRaw('CASE WHEN principal_transfers.zonalId IS NULL THEN 0 ELSE 1 END')
+        ->orderBy('work_places.name')          // first order by workplace
+        ->get()
+        ->map(function ($item) {
+            $item->refferenceNo = Crypt::encryptString($item->refferenceNo);
+            return $item;
+        });
+
+        //dd($principals);
+        $option = [
+            'Dashboard' => 'dashboard',
+        ];
+
+        return view('principal/transfer-zone-list',compact('option', 'principals'));
+    }
+
+    public function principaltransferzonalprofile(Request $request)
+    {
+        try {
+            $referenceNo = Crypt::decryptString($request->id);
+            //dd($referenceNo);
+            $principal = User::join('user_in_services', 'users.id', '=', 'user_in_services.userId')
+            ->join('user_service_appointments', 'user_in_services.id', '=', 'user_service_appointments.userServiceId')
+            ->join('principal_transfers', 'user_in_services.id', '=', 'principal_transfers.userServiceId')
+
+            // Normal school preferences
+            ->leftJoin('schools as ns1', 'principal_transfers.school1Id', '=', 'ns1.id')
+            ->leftJoin('work_places as nwp1', 'ns1.workPlaceId', '=', 'nwp1.id')
+
+            ->leftJoin('schools as ns2', 'principal_transfers.school2Id', '=', 'ns2.id')
+            ->leftJoin('work_places as nwp2', 'ns2.workPlaceId', '=', 'nwp2.id')
+
+            ->leftJoin('schools as ns3', 'principal_transfers.school3Id', '=', 'ns3.id')
+            ->leftJoin('work_places as nwp3', 'ns3.workPlaceId', '=', 'nwp3.id')
+
+            ->leftJoin('schools as ns4', 'principal_transfers.school4Id', '=', 'ns4.id')
+            ->leftJoin('work_places as nwp4', 'ns4.workPlaceId', '=', 'nwp4.id')
+
+            ->leftJoin('schools as ns5', 'principal_transfers.school5Id', '=', 'ns5.id')
+            ->leftJoin('work_places as nwp5', 'ns5.workPlaceId', '=', 'nwp5.id')
+
+
+
+            ->where('principal_transfers.refferenceNo', $referenceNo)
+            ->where('principal_transfers.active', 1)
+
+            ->select(
+                'users.id AS userId',
+                'users.name AS principal',
+                'users.nic',
+                'principal_transfers.refferenceNo',
+                'principal_transfers.reason',
+
+                // Normal schools + workplaces
+                'nwp1.name as workPlace1',
+                'nwp2.name as workPlace2',
+                'nwp3.name as workPlace3',
+                'nwp4.name as workPlace4',
+                'nwp5.name as workPlace5',
+
+            )
+            ->first();
+
+            if ($principal) {
+                $zoneReasons = [
+                    1 => 'This principal can be released without a successor as he/she is an excess principal.',
+                    2 => 'This principal can be released only if a suitable successor is provided.',
+                    3 => 'This principal can be released without a successor.',
+                    4 => 'This principal can’t be released.',
+                ];
+
+                $principal->zoneReasonText = $zoneReasons[$principal->zoneReason] ?? 'Pending';
+            }
+
+            //dd($principal);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            abort(403, 'Invalid or tampered payload.');
+        }
+        //dd($principal);
+        $option = [
+            'Dashboard' => 'dashboard',
+            'Transfer List' => 'principal.transferzonelist',
+        ];
+
+        $decision1 = collect([
+            (object) ['id' => 1, 'name' => 'The service of this principal has been confirmed.'],
+            (object) ['id' => 2, 'name' => 'The service of this principal has not been confirmed.'],
+        ]);
+
+        $decision2 = collect([
+            (object) ['id' => 1, 'name' => 'There are disciplinary or audit queries against this principal.'],
+            (object) ['id' => 2, 'name' => 'There aren’t disciplinary or audit queries against this principal.'],
+        ]);
+
+        $decision3 = collect([
+            (object) ['id' => 1, 'name' => 'This principal is Supernumeric.'],
+            (object) ['id' => 2, 'name' => 'This principal is Principal Graded.'],
+        ]);
+
+        $decision4 = collect([
+            (object) ['id' => 1, 'name' => 'This principal can be released with a successor.'],
+            (object) ['id' => 2, 'name' => 'This principal can be released without a successor.'],
+            (object) ['id' => 3, 'name' => 'This transfer was rejected (due to insufficient service period or other).'],
+        ]);
+
+
+
+        return view('principal/transfer-zonal-confirm',compact('option','principal', 'decision1','decision2','decision3', 'decision4', 'referenceNo'));
+    }
+
+
+    public function principaltransferzonalprofilestore(UpdatePrincipalTransferRequest $request)
+    {
+        //dd($request);
+        $transfer = PrincipalTransfer::where('refferenceNo', $request->referenceNo)->first();
+        //dd($transfer);
+        if (!$transfer) {
+            return redirect()->back()->with('error', 'Invalid reference number.');
+        }
+
+        // Update required fields
+        $transfer->zonalId = session('officeId');
+        $transfer->zonalReason1 = $request->decision1;
+        $transfer->zonalReason2 = $request->decision2;
+        $transfer->zonalReason3 = $request->decision3;
+        $transfer->zonalReason4 = $request->decision4;
+        $transfer->zonalTime = Carbon::now();
+
+        $transfer->save();
+
+        return redirect()->route('principal.transferzonelist')->with('success', 'zonal Director recommendation saved successfully.');
+    }
+
+    public function transfersummary()
+    {
+        $option = [
+            'Dashboard' => 'principal.dashboard',
+        ];
+        return view('principal/transfer-summary',compact('option'));
     }
 
     /**

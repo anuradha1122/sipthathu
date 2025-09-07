@@ -13,14 +13,27 @@ return new class extends Migration
     {
         Schema::create('user_in_services', function (Blueprint $table) {
             $table->id();
-            $table->integer('userId')->unsigned()->required();
-            $table->tinyInteger('serviceId')->unsigned()->required();
-            $table->date('appointedDate')->required();
+
+            // Foreign key to users (if users.id is UUID)
+            $table->foreignId('userId')
+                  ->constrained('users')
+                  ->restrictOnDelete();
+
+            // Foreign key to services (if services.id is UUID)
+            $table->foreignId('serviceId')
+                  ->constrained('services')
+                  ->restrictOnDelete();
+
+            $table->date('appointedDate');
             $table->date('releasedDate')->nullable();
-            $table->tinyInteger('current')->default(1)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            $table->boolean('current')->default(1);
+            $table->boolean('active')->default(1);
+
             $table->timestamps();
         });
+
+
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TransferReasonSeeder extends Seeder
 {
@@ -13,7 +13,10 @@ class TransferReasonSeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable FK checks → safe truncate
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('transfer_reasons')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = array(
             array('id' => '1','name' => 'No Reason'),

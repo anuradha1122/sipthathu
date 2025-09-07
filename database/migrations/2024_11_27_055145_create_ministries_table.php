@@ -13,10 +13,29 @@ return new class extends Migration
     {
         Schema::create('ministries', function (Blueprint $table) {
             $table->id();
-            $table->integer('workPlaceId')->unsigned()->required();
-            $table->integer('officeId')->unsigned()->nullable();
-            $table->string('ministryNo', 4)->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign key to work_places
+            $table->foreignId('workPlaceId')
+                  ->constrained('work_places')
+                  ->restrictOnDelete();
+
+            // Foreign key to offices (nullable)
+            $table->foreignId('officeId')
+                  ->nullable()
+                  ->constrained('offices')
+                  ->nullOnDelete();
+
+            // Foreign key to ministry_types (nullable)
+            $table->foreignId('ministryTypeId')
+                  ->nullable()
+                  ->constrained('ministry_types')
+                  ->nullOnDelete();
+
+            $table->string('ministryNo', 4);
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
     }

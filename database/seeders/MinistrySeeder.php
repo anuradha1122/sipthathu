@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MinistrySeeder extends Seeder
 {
@@ -13,7 +13,10 @@ class MinistrySeeder extends Seeder
      */
     public function run(): void
     {
+        // Disable FK checks, truncate table, re-enable checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('ministries')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $data = array(
             array('workPlaceId' => '1','officeId' => NULL,'ministryNo' => 'M1'),
@@ -26,8 +29,10 @@ class MinistrySeeder extends Seeder
             array('workPlaceId' => '8','officeId' => '7','ministryNo' => 'M8'),
             array('workPlaceId' => '9','officeId' => '8','ministryNo' => 'M9'),
             array('workPlaceId' => '10','officeId' => '9','ministryNo' => 'M10')
-          );
+        );
 
         DB::table('ministries')->insert($data);
+
+
     }
 }

@@ -12,20 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('personal_infos', function (Blueprint $table) {
-            $table->id();
-            $table->integer('userId')->unsigned()->required()->unique();
+            $table->id(); 
+
+            // Link to users (1-to-1, each user has only one personal info record)
+            $table->foreignId('userId')->unique()->constrained('users')->cascadeOnDelete();
+
+            // Profile picture path (nullable)
             $table->string('profilePicture', 300)->nullable();
-            $table->tinyInteger('raceId')->unsigned()->nullable();
-            $table->tinyInteger('religionId')->unsigned()->nullable();
-            $table->tinyInteger('civilStatusId')->unsigned()->nullable();
-            $table->tinyInteger('genderId')->unsigned()->required();
-            $table->tinyInteger('bloodGroupId')->unsigned()->nullable();
-            $table->mediumInteger('illnessId')->nullable();
-            $table->date('birthDay')->required();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign keys to lookup tables (tinyint is fine if you have <255 records in each)
+
+            $table->foreignId('raceId')->nullable()->constrained('races')->restrictOnDelete();
+            $table->foreignId('religionId')->nullable()->constrained('religions')->restrictOnDelete();
+            $table->foreignId('civilStatusId')->nullable()->constrained('civil_statuses')->restrictOnDelete();
+            $table->tinyInteger('genderId')->unsigned()->nullable(); // now optional
+            $table->foreignId('bloodGroupId')->nullable()->constrained('blood_groups')->restrictOnDelete();
+            $table->foreignId('illnessId')->nullable()->constrained('illnesses')->restrictOnDelete();
+
+
+            // Birthday is required
+            $table->date('birthDay');
+
+            $table->tinyInteger('active')->default(1);
+
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

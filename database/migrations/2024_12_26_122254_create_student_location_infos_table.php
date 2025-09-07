@@ -13,12 +13,29 @@ return new class extends Migration
     {
         Schema::create('student_location_infos', function (Blueprint $table) {
             $table->id();
-            $table->integer('studentId')->unsigned()->required();
-            $table->mediumInteger('educationDivisionId')->unsigned()->nullable();
-            $table->mediumInteger('gnDivisionId')->unsigned()->nullable();
-            $table->tinyInteger('active')->default(1)->required();
+
+            // Foreign key to students
+            $table->foreignId('studentId')
+                  ->constrained('students')
+                  ->restrictOnDelete();
+
+            // Foreign keys for divisions (optional)
+            $table->foreignId('educationDivisionId')
+                  ->nullable()
+                  ->constrained('offices') // Assuming education divisions are stored in offices table
+                  ->nullOnDelete();
+
+            $table->foreignId('gnDivisionId')
+                  ->nullable()
+                  ->constrained('gn_divisions')
+                  ->nullOnDelete();
+
+            // Active flag
+            $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
+
     }
 
     /**
